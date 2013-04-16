@@ -1,0 +1,28 @@
+{
+  "name": "storageapi",
+  "version": "1.0.0",
+  "title": "jQuery Storage API",
+  "author": {
+    "name": "Julien Maurel"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "dependencies": {
+    "jquery": "1"
+  },
+  "description": "jQuery Storage API is a plugin to simplify access to local and session storage in HTML5",
+  "keywords": [
+    "storage",
+    "html5",
+    "localStorage",
+    "sessionStorage"
+  ],
+  "homepage": "https://github.com/julien-maurel/jQuery-Storage-API",
+  "files": [
+    "jquery.storageapi.js"
+  ]
+}
