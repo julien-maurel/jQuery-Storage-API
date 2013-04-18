@@ -2,35 +2,56 @@ JQuery Storage API
 ==================
 
 JQuery Storage API is a plugin to simplify access to local and session storage in HTML5.
-This plugin encode and decode objects automaticly on JSON format, can be used with namespace...
+
+Functionalities:
+* To store object easily, encod/decode it with JSON automatically
+* Ability to define namespace and use it as a specific storage
+* Magic getter and setter to have access at an infinite object level with one line
 
 
 Storages
 --------
+#### Local storage
+    $.localStorage
 
-$.localStorage : API to the local storage
-$.sessionStorage : API to the session storage
-ns=$.initNamespaceStorage : return a namespace
-ns.localStorage : API to the namespace on local storage
-ns.sessionStorage : API to the namespace on session storage
-
-
-Methods on a storage
---------------------
-
-get(a,b,c...) : get a variable from the storage
-set(a,b,c...,value) : set a variable in the storage
-delete(a,b,c...) : delete a variable from the storage
-deleteAll() : delete all variables from the storage
-
-
-Examples
---------
-
-    $.localStorage.set('foo','value'); // Set variable foo to value in localStorage
-    $.localStorage.set('foo','bar',...,'value'); // Set variable foo.bar... to value in localStorage
-    $.localStorage.set('foo','bar',...); // Get variable foo.bar... from localStorage
+#### Session storage
+    $.sessionStorage
     
-    var ns=$.initNamespaceStorage('namespace_name');
-    ns.localStorage.set('foo','bar',...,'value'); // Set variable foo.bar... to value in ns namespace of localStorage
-    ns.localStorage.get('foo','bar'...); // Get variable foo.bar... from ns namespace in localStorage
+#### Namespace storage
+    ns=$.initNamespaceStorage('ns_name');
+    ns.localStorage // Namespace in localStorage
+    ns.sessionStorage // Namespace in sessionStorage
+
+
+Public methods on storage
+-------------------------
+
+Public methods are usable on all storage objects ($.localStorage, $.sessionStorage or object return by $.initNamespaceStorage)
+
+    storage=$.localStorage
+
+### `get()`
+Get a variable from a storage
+
+    storage.get('foo') // Get storage.foo
+    storage.get('foo','foo2','foo3'...) // Get storage.foo.foo2.foo3...
+    storage.get(['foo','foo2']) // Get storage.foo and storage.foo2 in an object ({foo:storage.foo,foo2:storage.foo2})
+    
+### `set()`
+Set a variable in a storage
+
+    storage.set('foo','value') // Set storage.foo to "value"
+    storage.set('foo','foo2','foo3'...,'value') // Set storage.foo.foo2.foo3... to "value"
+    storage.set({'foo':'value,'foo2':'value2'}) // Set storage.foo to "value" and storage.foo2 to "value2"
+
+### `delete()`
+Delete a variable in a storage
+
+    storage.delete('foo') // Delete storage.foo
+    storage.delete('foo','foo2','foo3'...) // Delete storage.foo.foo2.foo3...
+    storage.delete(['foo','foo2']) // Delete storage.foo and storage.foo2
+    
+### `deleteAll()`
+Truncate the storage
+
+    storage.deleteAll() // Delete all variables from the storage
