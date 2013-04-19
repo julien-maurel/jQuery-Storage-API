@@ -4,7 +4,7 @@ JQuery Storage API
 JQuery Storage API is a plugin to simplify access to local and session storage in HTML5.
 
 Functionalities:
-* To store object easily, encod/decode it with JSON automatically
+* To store object easily, encode/decode it with JSON automatically
 * Ability to define namespace and use it as a specific storage
 * Magic getter and setter to have access at an infinite object level with one line
 
