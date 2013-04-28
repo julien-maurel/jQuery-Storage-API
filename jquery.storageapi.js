@@ -9,7 +9,7 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.1.1
+ * Version: 1.2.0
  *
  */
 (function($){
@@ -23,21 +23,21 @@
       for(var i in a1){
         vi=a1[i];
         try{
-          ret[vi]=JSON.parse(s[vi]);
+          ret[vi]=JSON.parse(s.getItem(vi));
         }catch(e){
-          ret[vi]=s[vi];
+          ret[vi]=s.getItem(vi);
         }
       }
       return ret;
     }else if(l==2){
       try{
-        return JSON.parse(s[a1]);
+        return JSON.parse(s.getItem(a1));
       }catch(e){
-        return s[a1];
+        return s.getItem(a1);
       }
     }else{
       try{
-        ret=JSON.parse(s[a1]);
+        ret=JSON.parse(s.getItem(a1));
       }catch(e){
         throw new ReferenceError(a1+' is not defined in this storage');
       }
@@ -57,19 +57,19 @@
     else if($.isPlainObject(a1)){
       for(var i in a1){
         vi=a1[i];
-        if(!$.isPlainObject(vi)) s[i]=vi;
-        else s[i]=JSON.stringify(vi);
+        if(!$.isPlainObject(vi)) s.setItem(i,vi);
+        else s.setItem(i,JSON.stringify(vi));
       }
       return a1;
     }else if(l==3 && !$.isPlainObject(a2)){
-      s[a1]=a2;
+      s.setItem(a1,a2);
       return a2;
     }else if(l==3){
-      s[a1]=JSON.stringify(a2);
+      s.setItem(a1,JSON.stringify(a2));
       return a2;
     }else{
       try{
-        to_store=JSON.parse(s[a1]);
+        to_store=JSON.parse(s.getItem(a1));
       }catch(e){
         to_store={};
       }
@@ -80,7 +80,7 @@
         tmp=tmp[vi];
       }
       tmp[a[i]]=a[i+1];
-      s[a1]=JSON.stringify(to_store);
+      s.setItem(a1,JSON.stringify(to_store));
       return to_store;
     }
   }
@@ -92,15 +92,15 @@
     if(l<2) throw new Error('Minimum 2 parameters must be given');
     else if($.isArray(a1)){
       for(var i in a1){
-        delete s[a1[i]];
+        s.removeItem(a1[i]);
       }
       return true;
     }else if(l==2){
-      delete s[a1];
+      s.removeItem(a1);
       return true;
     }else{
       try{
-        to_store=tmp=JSON.parse(s[a1]);
+        to_store=tmp=JSON.parse(s.getItem(a1));
       }catch(e){
         throw new ReferenceError(a1+' is not defined in this storage');
       }
@@ -109,7 +109,7 @@
         if(tmp===undefined) throw new ReferenceError([].slice.call(a,1,i).join('.')+' is not defined in this storage');
       }
       delete tmp[a[i]];
-      s[a1]=JSON.stringify(to_store);
+      s.setItem(a1,JSON.stringify(to_store));
       return true;
     }
   }
@@ -117,19 +117,24 @@
   // Delete all variables in a storage
   function _deleteAll(storage){
     for(var i in window[storage]){
-      delete window[storage][i];
+      window[storage].removeItem(i);
     }
   }
 
-  // Create new object to a namespace in a storage
+  // Create new namespace storage
   function _createNamespace(name){
     if(!name || typeof name!="string") throw new Error('First parameter must be a string');
-    if(!window.localStorage[name]) window.localStorage[name]='{}';
-    if(!window.sessionStorage[name]) window.sessionStorage[name]='{}';
-    return {
-      localStorage:$.extend({},storage,{_type:'localStorage',_ns:name}),
-      sessionStorage:$.extend({},storage,{_type:'sessionStorage',_ns:name})
+    if(!window.localStorage.getItem(name)) window.localStorage.setItem(name,'{}');
+    if(!window.sessionStorage.getItem(name)) window.sessionStorage.setItem(name,'{}');
+    var ns={
+      localStorage:$.extend({},$.localStorage,{_ns:name}),
+      sessionStorage:$.extend({},$.localStorage,{_ns:name})
     };
+    if($.cookie){
+      if(!window.cookieStorage.getItem(name)) window.cookieStorage.setItem(name,'{}');
+      ns.cookieStorage=$.extend({},$.cookieStorage,{_ns:name});
+    }
+    return ns;
   }
 
   // Namespace object
@@ -163,7 +168,9 @@
         var p=[this._type];
         if(this._ns) p.push(this._ns);
         [].unshift.apply(a,p);
-        return _set.apply(this,a);
+	var r=_set.apply(this,a);
+	if(this._ns) return r[a0];
+        else return r;
       }else if(this._ns){
         for(var i in a0){
           _set(this._type,this._ns,i,a0[i]);
@@ -201,6 +208,36 @@
     }
   };
 
+  // Use jquery.cookie for compatibility with old browsers and give access to cookieStorage
+  if($.cookie){
+    // sessionStorage is valid for one window/tab. To simulate that with cookie, we set a name for the window and use it for the name of the cookie
+    if(!window.name) window.name=Math.floor(Math.random()*100000000);
+    var cookie_storage={
+      _prefix:'',
+      _expires:null,
+      setItem:function(n,v){
+	$.cookie(this._prefix+n,v,{expires:this._expires});
+      },
+      getItem:function(n){
+	return $.cookie(this._prefix+n);
+      },
+      removeItem:function(n){
+	return $.removeCookie(this._prefix+n);
+      },
+      setExpires:function(e){
+	this._expires=e;
+	return this;
+      }
+    };
+    if(!window.localStorage){
+      window.localStorage=$.extend({},cookie_storage,{_prefix:'ls_',_expires:365*10});
+      window.sessionStorage=$.extend({},cookie_storage,{_prefix:'ss_'+window.name+'_'});
+    }
+    window.cookieStorage=$.extend({},cookie_storage);
+    // cookieStorage API
+    $.cookieStorage=$.extend({},storage,{_type:'cookieStorage',setExpires:function(e){window.cookieStorage.setExpires(e); return this;}});
+  }
+  
   // Get a new API on a namespace
   $.initNamespaceStorage=function(ns){ return _createNamespace(ns); };
   // localStorage API
