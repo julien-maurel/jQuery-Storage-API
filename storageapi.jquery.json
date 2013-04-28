@@ -1,6 +1,6 @@
 {
   "name": "storageapi",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "title": "jQuery Storage API",
   "author": {
     "name": "Julien Maurel",
@@ -20,7 +20,8 @@
     "storage",
     "html5",
     "localStorage",
-    "sessionStorage"
+    "sessionStorage",
+    "cookie"
   ],
   "homepage": "https://github.com/julien-maurel/jQuery-Storage-API",
   "bugs": "https://github.com/julien-maurel/jQuery-Storage-API/issues",
