@@ -69,16 +69,21 @@
       return a2;
     }else{
       try{
-        to_store=JSON.parse(s.getItem(a1));
+        var tmpStore = s.getItem(a1);
+        if(tmpStore != null) {
+          to_store=JSON.parse(tmpStore);
+        }
       }catch(e){
-        to_store={};
+        //Already set to {}
       }
+
       tmp=to_store;
       for(var i=2;i<l-2;i++){
         vi=a[i];
         if(!tmp[vi] || !$.isPlainObject(tmp[vi])) tmp[vi]={};
         tmp=tmp[vi];
       }
+
       tmp[a[i]]=a[i+1];
       s.setItem(a1,JSON.stringify(to_store));
       return to_store;
@@ -119,6 +124,25 @@
     for(var i in window[storage]){
       window[storage].removeItem(i);
     }
+  }
+
+  // Check if storage is empty
+  function _isEmpty(storage){
+    var l=arguments.length,s=window[storage],a=arguments,a1=a[1],to_store={}
+    if(s.length == 0){
+      return true
+    } else if(l > 1){
+      try {
+        var item = s.getItem(a1);
+        if(item != null) {
+          to_store=JSON.parse(s.getItem(a1));
+        }
+      }catch(e) {
+        //to_store already set to {}
+      }
+      return Object.keys(to_store).length == 0
+    }
+    return false;
   }
 
   // Create new namespace storage
@@ -204,6 +228,13 @@
         return true;
       }else{
         return _deleteAll(this._type);
+      }
+    },
+    isEmpty:function(){
+      if(this._ns){
+        return _isEmpty(this._type, this._ns);
+      }else{
+        return _isEmpty(this._type);
       }
     }
   };
