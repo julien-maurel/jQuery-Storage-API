@@ -180,8 +180,9 @@
         return _set(this._type,a0);
       }
     },
-    // Delete a variable. 
-    delete:function(){
+    // Delete a variable.
+    // IE doesn't like the .delete method
+    remove:function(){
       var l=arguments.length,a=arguments,a0=a[0],vi;
       if(l<1) throw new Error('Minimum 1 parameter must be given');
       if(!$.isArray(a0)){
@@ -198,7 +199,7 @@
         return _delete(this._type,a0);
       }
     },
-    deleteAll:function(){
+    removeAll:function(){
       if(this._ns){
         _set(this._type,this._ns,{});
         return true;
