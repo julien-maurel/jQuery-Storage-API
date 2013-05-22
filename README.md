@@ -36,30 +36,39 @@ Public methods are usable on all storage objects ($.localStorage, $.sessionStora
     storage=$.localStorage
 
 ### `get()`
-Get a variable from a storage
+Get a variable from a storage.
 
     storage.get('foo') // Get storage.foo
-    storage.get('foo','foo2','foo3'...) // Get storage.foo.foo2.foo3...
     storage.get(['foo','foo2']) // Get storage.foo and storage.foo2 in an object ({foo:storage.foo,foo2:storage.foo2})
 
 ### `set()`
-Set a variable in a storage
+Set a variable in a storage.
 
     storage.set('foo','value') // Set storage.foo to "value"
-    storage.set('foo','foo2','foo3'...,'value') // Set storage.foo.foo2.foo3... to "value"
     storage.set({'foo':'value,'foo2':'value2'}) // Set storage.foo to "value" and storage.foo2 to "value2"
 
 ### `delete()`
-Delete a variable in a storage
+Delete a variable in a storage.
 
     storage.delete('foo') // Delete storage.foo
-    storage.delete('foo','foo2','foo3'...) // Delete storage.foo.foo2.foo3...
     storage.delete(['foo','foo2']) // Delete storage.foo and storage.foo2
 
 ### `deleteAll()`
-Truncate the storage
+Truncate the storage. When using Namespace storage, delete only the variables in the namespace unless true is passed in.
 
     storage.deleteAll() // Delete all variables from the storage
+    storage.deleteAll(false) //Delete only the variables inside the namespace storage
+    storage.deleteAll(true) // Delete all variables inside and outside of the namespace storage
+
+### `isEmpty()`
+Returns true if there are no variables in storage. When using Namespace storage, return true if there are no variables in the namespace. 
+
+    storage.isEmpty() // Returns true if items in storage
+
+### `keys()`
+Returns all the keys of the variables in storage. When using Namespace storage, return only the keys for the variables in the namespace. 
+
+    storage.keys() // Returns all the keys of the variables in the storage
 
 ### `setExpires()`
 Only on cookieStorage. Set expires date in days (default value is null, cookie is valid for session only; only values setted after setExpires() call be affected) 

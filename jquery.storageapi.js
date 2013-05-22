@@ -38,14 +38,10 @@
     }else{
       try{
         ret=JSON.parse(s.getItem(a1));
+        return ret[a[2]];
       }catch(e){
         throw new ReferenceError(a1+' is not defined in this storage');
       }
-      for(var i=2;i<l-1;i++){
-        ret=ret[a[i]];
-        if(ret===undefined) throw new ReferenceError([].slice.call(a,1,i+1).join('.')+' is not defined in this storage');
-      }
-      return ret[a[i]];
     }
   }
 
