@@ -3,10 +3,16 @@ describe("Jquery.StorageApi", function() {
   describe("local storage", function() {   
     var storage = $.localStorage;
 
-    afterEach(function () {
+    beforeEach(function () {
       storage.deleteAll();
     });
 
+    it("'keys' returns the keys associated with stored items", function() {
+      storage.set("item1", "value1");
+      storage.set("item2", "value2");
+      expect(storage.keys()).toEqual(["item1", "item2"]);
+    });
+    
     it("'get' retrieves a value by key", function() {
       window.localStorage.setItem("item", "value");
       expect(storage.get("item")).toEqual("value");
@@ -49,8 +55,14 @@ describe("Jquery.StorageApi", function() {
   describe("local storage using namespaces", function() {   
     var storage = $.initNamespaceStorage("test_ns").localStorage;
     
-    afterEach(function () {
-      storage.deleteAll();
+    beforeEach(function () {
+      storage.deleteAll(true);
+    });
+
+    it("'keys' returns the keys associated with stored items in the namespace", function() {
+      storage.set("item1", "value1");
+      storage.set("item2", "value2");
+      expect(storage.keys()).toEqual(["item1", "item2"]);
     });
 
     it("'get' retrieves a value by item", function() {
@@ -87,6 +99,20 @@ describe("Jquery.StorageApi", function() {
       expect(window.localStorage.getItem("item")).toEqual("shouldNotBeDeleted");
     });
 
+    it("'deleteAll' removes all stored items inside and outside of namespace", function() {
+      expect(storage.isEmpty()).toBeTruthy();
+      window.localStorage.setItem("nonNsItemToDelete", "shouldBeDeleted");
+      hash = {'itemToDelete1':'value1', 'itemToDelete2':'value2'};
+      window.localStorage.setItem("test_ns", JSON.stringify(hash));
+     
+      expect(storage.get("itemToDelete1")).toEqual("value1");
+      expect(storage.get("itemToDelete2")).toEqual("value2");
+      storage.deleteAll(true);
+      expect(storage.get("itemToDelete1")).toEqual(null);
+      expect(storage.get("itemToDelete1")).toEqual(null);
+      expect(window.localStorage.getItem("nonNsItemToDelete")).toEqual(null);
+    });
+
     it("'isEmpty' returns true if there are no items in namespace", function() {
       window.localStorage.setItem("item", "notInNamespace");
       storage.deleteAll();
@@ -104,8 +130,14 @@ describe("Jquery.StorageApi", function() {
   describe("session storage", function() {   
     var storage = $.sessionStorage;
 
-    afterEach(function () {
+    beforeEach(function () {
       storage.deleteAll();
+    });
+
+    it("'keys' returns the keys associated with stored items", function() {
+      storage.set("item1", "value1");
+      storage.set("item2", "value2");
+      expect(storage.keys()).toEqual(["item1", "item2"]);
     });
 
     it("'get' retrieves a value by key", function() {
@@ -151,8 +183,14 @@ describe("Jquery.StorageApi", function() {
     describe("cookie storage", function() {   
       var storage = $.cookieStorage;
 
-      afterEach(function () {
+      beforeEach(function () {
         storage.deleteAll();
+      });
+
+      it("'keys' returns the keys associated with stored items", function() {
+        storage.set("item1", "value1");
+        storage.set("item2", "value2");
+        expect(storage.keys()).toEqual(["item1", "item2"]);
       });
 
       it("'get' retrieves a value by key", function() {

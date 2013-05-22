@@ -135,7 +135,16 @@
     if(s.length == 0){
       return true
     } else if(l > 1){
-      try {
+      return _keys(storage, a1).length == 0
+    }
+    return false;
+  }
+
+  //Return the keys in storage
+  function _keys(storage){
+    var l=arguments.length,s=window[storage],a=arguments,a1=a[1],to_store={};
+    if(l > 1) {
+      try{
         var item = s.getItem(a1);
         if(item != null) {
           to_store=JSON.parse(s.getItem(a1));
@@ -143,9 +152,10 @@
       }catch(e) {
         //to_store already set to {}
       }
-      return Object.keys(to_store).length == 0
+      return Object.keys(to_store);
+    }else{
+      return Object.keys(s);
     }
-    return false;
   }
 
   // Create new namespace storage
@@ -225,8 +235,16 @@
         return _delete(this._type,a0);
       }
     },
-    deleteAll:function(){
+    // Delete everything in storage. When using namespaces, deleteAll will only delete everything in the
+    // namespace unless true it passed to deleteAll.
+    deleteAll:function(all){
+      if(all == undefined){
+        all = false;   
+      }
       if(this._ns){
+        if(all){
+          _deleteAll(this._type);
+        }
         _set(this._type,this._ns,{});
         return true;
       }else{
@@ -238,6 +256,13 @@
         return _isEmpty(this._type, this._ns);
       }else{
         return _isEmpty(this._type);
+      }
+    },
+    keys:function(){
+      if(this._ns){
+        return _keys(this._type, this._ns);    
+      }else{
+        return _keys(this._type);
       }
     }
   };
