@@ -49,17 +49,17 @@ Set a variable in a storage
     storage.set('foo','foo2','foo3'...,'value') // Set storage.foo.foo2.foo3... to "value"
     storage.set({'foo':'value,'foo2':'value2'}) // Set storage.foo to "value" and storage.foo2 to "value2"
 
-### `delete()`
+### `remove()`
 Delete a variable in a storage
 
-    storage.delete('foo') // Delete storage.foo
-    storage.delete('foo','foo2','foo3'...) // Delete storage.foo.foo2.foo3...
-    storage.delete(['foo','foo2']) // Delete storage.foo and storage.foo2
+    storage.remove('foo') // Delete storage.foo
+    storage.remove('foo','foo2','foo3'...) // Delete storage.foo.foo2.foo3...
+    storage.remove(['foo','foo2']) // Delete storage.foo and storage.foo2
 
-### `deleteAll()`
+### `removeAll()`
 Truncate the storage
 
-    storage.deleteAll() // Delete all variables from the storage
+    storage.removeAll() // Delete all variables from the storage
 
 ### `setExpires()`
 Only on cookieStorage. Set expires date in days (default value is null, cookie is valid for session only; only values setted after setExpires() call be affected) 
@@ -80,3 +80,13 @@ JQuery Storage API is compatible with all browsers that support storage and JSON
 If you want more compatibility :
 * Add jquery.cookie (https://github.com/carhartl/jquery-cookie) before this plugin and storage will work on every browsers that support JSON natively!
 * You want more? Add json2.js (https://github.com/douglascrockford/JSON-js) too and storage will be enable on every browsers!
+
+
+
+Migration
+---------
+
+### 1.2.x => 1.3.0
+To resolve an issue on IE8 that doesn't like function named "delete", we had to change name of delete functions.  
+So public methods "delete" and "deleteAll" become "remove" and "removeAll".  
+Sorry for inconvenience...

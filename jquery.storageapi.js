@@ -9,7 +9,7 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.2.1
+ * Version: 1.3.0
  *
  */
 (function($){
@@ -87,7 +87,7 @@
 
   // Delete a variable in a storage. Infinite arguments to be able to delete property in objects
   // If second argument is an array, each property is deleted
-  function _delete(storage){
+  function _remove(storage){
     var l=arguments.length,s=window[storage],a=arguments,a1=a[1],to_store,tmp;
     if(l<2) throw new Error('Minimum 2 parameters must be given');
     else if($.isArray(a1)){
@@ -115,7 +115,7 @@
   }
 
   // Delete all variables in a storage
-  function _deleteAll(storage){
+  function _removeAll(storage){
     for(var i in window[storage]){
       window[storage].removeItem(i);
     }
@@ -181,7 +181,6 @@
       }
     },
     // Delete a variable.
-    // IE doesn't like the .delete method
     remove:function(){
       var l=arguments.length,a=arguments,a0=a[0],vi;
       if(l<1) throw new Error('Minimum 1 parameter must be given');
@@ -189,22 +188,23 @@
         var p=[this._type];
         if(this._ns) p.push(this._ns);
         [].unshift.apply(a,p);
-        return _delete.apply(this,a);
+        return _remove.apply(this,a);
       }else if(this._ns){
         for(var i in a0){
-          _delete(this._type,this._ns,a0[i]);
+          _remove(this._type,this._ns,a0[i]);
         }
         return true;
       }else{
-        return _delete(this._type,a0);
+        return _remove(this._type,a0);
       }
     },
+    // Delete all variable
     removeAll:function(){
       if(this._ns){
         _set(this._type,this._ns,{});
         return true;
       }else{
-        return _deleteAll(this._type);
+        return _removeAll(this._type);
       }
     }
   };
