@@ -85,6 +85,7 @@
       }
 
       tmp[a[i]]=a[i+1];
+
       s.setItem(a1,JSON.stringify(to_store));
       return to_store;
     }
@@ -121,8 +122,10 @@
 
   // Delete all variables in a storage
   function _deleteAll(storage){
-    for(var i in window[storage]){
-      window[storage].removeItem(i);
+    var keys = Object.keys(window[storage]);
+
+    for(var i=0; i < keys.length; i++){
+      _delete(storage, keys[i]);
     }
   }
 
@@ -192,8 +195,8 @@
         var p=[this._type];
         if(this._ns) p.push(this._ns);
         [].unshift.apply(a,p);
-	var r=_set.apply(this,a);
-	if(this._ns) return r[a0];
+        var r=_set.apply(this,a);
+        if(this._ns) return r[a0];
         else return r;
       }else if(this._ns){
         for(var i in a0){
@@ -243,28 +246,81 @@
   if($.cookie){
     // sessionStorage is valid for one window/tab. To simulate that with cookie, we set a name for the window and use it for the name of the cookie
     if(!window.name) window.name=Math.floor(Math.random()*100000000);
-    var cookie_storage={
-      _prefix:'',
-      _expires:null,
-      setItem:function(n,v){
-	$.cookie(this._prefix+n,v,{expires:this._expires});
-      },
-      getItem:function(n){
-	return $.cookie(this._prefix+n);
-      },
-      removeItem:function(n){
-	return $.removeCookie(this._prefix+n);
-      },
-      setExpires:function(e){
-	this._expires=e;
-	return this;
-      }
-    };
+ 
+    //Define window.cookieStorage using defineProperty. Allows us to override the objects default 'get' function 
+    //to make window.cookieStorage work the same as window.localStorage.
+    Object.defineProperty(window, "cookieStorage", new (function() {
+      var cookie_storage = {};
+
+      Object.defineProperty(cookie_storage, "_prefix", {
+        value: '',
+        enumerable: false
+      });
+      Object.defineProperty(cookie_storage, "_expires", {
+        value: null,
+        enumerable: false
+      });
+      Object.defineProperty(cookie_storage, "getItem", {
+        value: function (key) { return key ? $.cookie(this._prefix+key) : null; }
+      });
+      Object.defineProperty(cookie_storage, "key", {
+        value: function (index) { 
+          var keys = Object.keys($.cookie());
+          return keys[index];
+        }
+      });
+      Object.defineProperty(cookie_storage, "setItem", {
+        value: function (key, value) {
+          if(!key) { return; }
+          cookie_storage[key] = value;
+          $.cookie(this._prefix+key, value,{expires:this._expires})
+        }
+      });
+      Object.defineProperty(cookie_storage, "length", {
+        get: function () { 
+          var keys = Object.keys($.cookie());
+          //$.cookie always contains at least an empty key/value reference so don't count it
+          if((keys.length == 1) && (keys[0] == '')){ 
+            return 0;
+          }
+          return keys.length
+        }
+      });
+      Object.defineProperty(cookie_storage, "removeItem", {
+        value: function (key) {
+          if(!key) { return; }
+          delete cookie_storage[key];
+          return $.removeCookie(this._prefix+key)
+        }
+      });
+      Object.defineProperty(cookie_storage, "setExpires", {
+        value: function (expires) {
+          this._expires=expires;
+          return this;
+        }
+      });
+      this.get = function() {
+        //Remove cookie properties on cookie_storage 
+        var keys = Object.keys(cookie_storage);
+        for (var i=1;i < keys.length;i++){
+          delete cookie_storage[key];
+        }
+
+        //Add cookies as properties on cookie_storage
+        for(var key in $.cookie()){
+          if(key != '') {
+            cookie_storage[key] = $.cookie(key);
+          }
+        }
+        return cookie_storage;
+      };
+    })());
+
     if(!window.localStorage){
-      window.localStorage=$.extend({},cookie_storage,{_prefix:'ls_',_expires:365*10});
-      window.sessionStorage=$.extend({},cookie_storage,{_prefix:'ss_'+window.name+'_'});
+      window.localStorage=$.extend({},window.cookieStorage,{_prefix:'ls_', _expires:365*10});
+      window.sessionStorage=$.extend({},window.cookieStorage,{_prefix:'ss_' + window.name + '_'});
     }
-    window.cookieStorage=$.extend({},cookie_storage);
+    
     // cookieStorage API
     $.cookieStorage=$.extend({},storage,{_type:'cookieStorage',setExpires:function(e){window.cookieStorage.setExpires(e); return this;}});
   }
