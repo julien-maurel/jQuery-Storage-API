@@ -9,7 +9,7 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.3.0
+ * Version: 1.3.1
  *
  */
 (function($){
@@ -69,9 +69,11 @@
       return a2;
     }else{
       try{
-        to_store=JSON.parse(s.getItem(a1));
+        tmp = s.getItem(a1);
+        if(tmp != null) {
+          to_store=JSON.parse(tmp);
+        }
       }catch(e){
-        to_store={};
       }
       tmp=to_store;
       for(var i=2;i<l-2;i++){
