@@ -118,8 +118,7 @@
 
   // Delete all variables in a storage
   function _deleteAll(storage){
-    var keys = Object.keys(window[storage]);
-
+    var keys = _keys(storage);
     for(var i=0; i < keys.length; i++){
       _delete(storage, keys[i]);
     }
@@ -138,20 +137,21 @@
 
   //Return the keys in storage
   function _keys(storage){
-    var l=arguments.length,s=window[storage],a=arguments,a1=a[1],to_store={};
+    var l=arguments.length,s=window[storage],a=arguments,a1=a[1],keys=[];
     if(l > 1) {
       try{
         var item = s.getItem(a1);
         if(item != null) {
-          to_store=JSON.parse(s.getItem(a1));
+          s=JSON.parse(s.getItem(a1));
         }
       }catch(e) {
         //to_store already set to {}
       }
-      return Object.keys(to_store);
-    }else{
-      return Object.keys(s);
     }
+    for(var i in s){
+      keys.push(i);
+    }
+    return keys;
   }
 
   // Create new namespace storage
@@ -286,20 +286,29 @@
       });
       Object.defineProperty(cookie_storage, "key", {
         value: function (index) { 
-          var keys = Object.keys($.cookie());
-          return keys[index];
+          var x=0;
+          for(var i in $.cookie()){
+            if(x == index){
+              return i;
+            }
+            x++;
+          }
+          return null;
         }
       });
       Object.defineProperty(cookie_storage, "setItem", {
         value: function (key, value) {
           if(!key) { return; }
-          cookie_storage[key] = value;
           $.cookie(this._prefix+key, value,{expires:this._expires})
+          cookie_storage[key] = $.cookie(this._prefix+key);
         }
       });
       Object.defineProperty(cookie_storage, "length", {
-        get: function () { 
-          var keys = Object.keys($.cookie());
+        get: function () {
+          var keys = [];
+          for(var i in $.cookie()){
+            keys.push(i);
+          }
           //$.cookie always contains at least an empty key/value reference so don't count it
           if((keys.length == 1) && (keys[0] == '')){ 
             return 0;
@@ -322,8 +331,7 @@
       });
       this.get = function() {
         //Remove cookie properties on cookie_storage 
-        var keys = Object.keys(cookie_storage);
-        for (var i=1;i < keys.length;i++){
+        for(var key in cookie_storage){
           delete cookie_storage[key];
         }
 
