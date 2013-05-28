@@ -1,0 +1,432 @@
+describe("Jquery.StorageApi", function() {
+  describe('Storage available',function(){
+    it("Storage are natively avalaible or cookie fallback is enable", function() {
+      expect(window.localStorage).toEqual(jasmine.any(Object));
+      expect(window.sessionStorage).toEqual(jasmine.any(Object));
+    });
+  });
+
+  var storage_types=['localStorage','sessionStorage'];
+  if($.cookie) {
+    storage_types.push('cookieStorage');
+  }else{
+    console.log("Skipping $.cookieStorage specs. Could not load JQuery $.cookie.");
+  }
+  storage_types.push('ns.localStorage');
+  storage_types.push('ns.sessionStorage');
+  if($.cookie) {
+    storage_types.push('ns.cookieStorage');
+  }
+
+  for(var s in storage_types){
+    describe(storage_types[s], function() {   
+      if(storage_types[s].indexOf('ns.')===0){
+        var substorage=storage_types[s].substr(3);
+        var storage = $.initNamespaceStorage('ns_test')[substorage];
+        var wstorage = {
+          getItem:function(n){
+            var ret=window[substorage].getItem('ns_test');
+            ret=JSON.parse(ret);
+            ret=ret[n];
+            if(typeof ret=="object") return JSON.stringify(ret);
+            else if(typeof ret=="undefined") return null;
+            return ret;
+          },
+          setItem:function(n,v){
+            var ret=JSON.parse(window[substorage].getItem('ns_test'));
+            ret[n]=v;
+            window[substorage].setItem('ns_test',JSON.stringify(ret));
+          }
+        };
+      }else{
+        var substorage=false;
+        var storage = $[storage_types[s]];
+        var wstorage = window[storage_types[s]];
+      }
+
+      beforeEach(function () {
+        storage.removeAll();
+        if(substorage) $.initNamespaceStorage('ns_test');
+      });
+      afterEach(function () {
+        storage.removeAll();
+      });
+        
+      /* Remove tests */
+      it("'removeAll' removes all stored items", function() {
+        wstorage.setItem("itemToDelete1","value1");
+        wstorage.setItem("itemToDelete2","value2");
+        storage.removeAll();
+        if(substorage) $.initNamespaceStorage('ns_test');
+        expect(wstorage.getItem("itemToDelete1")).toEqual(null);
+        expect(wstorage.getItem("itemToDelete2")).toEqual(null);
+      });
+      
+      it("'remove' removes a stored item by key", function() {
+        wstorage.setItem("itemToDelete","value");
+        wstorage.setItem("itemToNotDelete","value");
+        storage.remove("itemToDelete");
+        expect(wstorage.getItem("itemToDelete")).toEqual(null);
+        expect(wstorage.getItem("itemToNotDelete")).toEqual("value");
+      });
+      
+      it("'remove' removes multiple stored items by key", function() {
+        wstorage.setItem("itemToDelete1","value1");
+        wstorage.setItem("itemToDelete2","value2");
+        wstorage.setItem("itemToNotDelete","value");
+        storage.remove(["itemToDelete1", "itemToDelete2"]);
+        expect(storage.get("itemToDelete1")).toEqual(null);
+        expect(storage.get("itemToDelete2")).toEqual(null);
+        expect(storage.get("itemToNotDelete")).toEqual("value");
+      });
+      
+      it("'remove' removes a stored item by chain parameters", function() {
+        wstorage.setItem("itemToDelete",JSON.stringify({"item1":"value1", "item2":"value2"}));
+        wstorage.setItem("itemToNotDelete","value");
+        storage.remove("itemToDelete","item1");
+        expect(JSON.parse(wstorage.getItem("itemToDelete"))).toEqual({"item2":"value2"});
+        expect(wstorage.getItem("itemToNotDelete")).toEqual("value");
+      });
+      
+      
+      /* Set tests */
+      it("'set' stores a value", function() {
+        var ret=storage.set("item", "value"); 
+        expect(ret).toEqual("value");
+        expect(wstorage.getItem("item")).toEqual("value");
+      });
+      
+      it("'set' stores multiple values", function() {
+        var ret=storage.set({"item1":"value1","item2":"value2"});
+        expect(ret).toEqual({"item1":"value1","item2":"value2"});
+        expect(wstorage.getItem("item1")).toEqual("value1");
+        expect(wstorage.getItem("item2")).toEqual("value2");
+      });
+      
+      it("'set' stores a value by chain parameters", function() {
+        var ret=storage.set("item", "itemprop", "value");
+        expect(ret).toEqual({"itemprop":"value"});
+        expect(JSON.parse(wstorage.getItem("item"))).toEqual({"itemprop":"value"});
+      });
+      
+      
+      /* Get tests */
+      it("'get' retrieves a value by key", function() {
+        storage.set("item", "value");
+        expect(storage.get("item")).toEqual("value");
+      });
+      
+      it("'get' retrieves values for multiple keys", function() {
+        storage.set("item1", "value1");
+        storage.set("item2", "value2");
+        storage.set("item3", "value3");
+        expect(storage.get(["item1", "item3"])).toEqual({"item1":"value1", "item3":"value3"});
+      });
+      
+      it("'get' retrieves values by chain parameters", function() {
+        storage.set("item", "itemprop", "value");
+        expect(storage.get("item", "itemprop")).toEqual("value");
+      });
+      
+      
+      /* Keys tests */
+      it("'keys' returns the keys associated with a storage", function() {
+        storage.set("item1", "value1");
+        storage.set("item2", "value2");
+        expect(storage.keys()).toEqual(["item1", "item2"]);
+      });
+      
+      it("'keys' returns the keys associated with an item in a storage", function() {
+        storage.set("item", {"item1":"value1", "item2":"value2"});
+        expect(storage.keys("item")).toEqual(["item1", "item2"]);
+      });
+      
+      it("'keys' returns the keys associated with an item in a storage by chain parameters", function() {
+        storage.set("item", "itemprop", {"item1":"value1", "item2":"value2"});
+        expect(storage.keys("item","itemprop")).toEqual(["item1", "item2"]);
+      });
+      
+      
+      /* isEmpty test */
+      it("'isEmpty' returns false if there are items in storage", function() {
+        expect(storage.isEmpty()).toBeTruthy();
+        storage.set("item", "value");
+        expect(storage.isEmpty()).toBeFalsy();
+      });
+      
+      it("'isEmpty' returns false if item in storage is not empty", function() {
+        storage.set("item1", "value");
+        storage.set("item2", "");
+        storage.set("item3", []);
+        storage.set("item4", [1]);
+        storage.set("item5", {});
+        storage.set("item6", {"prop":"value"});
+        expect(storage.isEmpty("item1")).toBeFalsy();
+        expect(storage.isEmpty("item2")).toBeTruthy();
+        expect(storage.isEmpty("item3")).toBeTruthy();
+        expect(storage.isEmpty("item4")).toBeFalsy();
+        expect(storage.isEmpty("item5")).toBeTruthy();
+        expect(storage.isEmpty("item6")).toBeFalsy();
+      });
+      
+      it("'isEmpty' returns false if item in storage is not empty by chain parameters", function() {
+        storage.set("item", "prop1", "value1");
+        expect(storage.isEmpty("item","prop1")).toBeFalsy();
+        expect(storage.isEmpty("item","prop2")).toBeTruthy();
+      });
+    });
+  }      
+
+/*
+  describe("local storage using namespaces", function() {   
+    var storage = $.initNamespaceStorage("test_ns").localStorage;
+    
+    beforeEach(function () {
+      storage.removeAll(true);
+    });
+
+    it("'keys' returns the keys associated with stored items in the namespace", function() {
+      window.localStorage.setItem("item", "shouldNotBeReturned");
+      storage.set("item1", "value1");
+      storage.set("item2", "value2");
+      expect(storage.keys()).toEqual(["item1", "item2"]);
+    });
+
+    it("'get' retrieves a value by item", function() {
+      hash = {'item':'value'};
+      window.localStorage.setItem("test_ns", JSON.stringify(hash));
+      expect(storage.get("item")).toEqual("value");
+    });
+
+    it("'get' retrieves values for multiple keys", function() {
+      hash = {'item1':'value1', 'item2':'value2', 'item3':'value3'};
+      window.localStorage.setItem("test_ns", JSON.stringify(hash));
+      expect(storage.get(["item1", "item3"])).toEqual({"item1":"value1", "item3":"value3"});
+    });
+    
+    it("'set' stores a value", function() {
+      hash = {'item':'value'};
+      storage.set("item", "value"); 
+      expect(window.localStorage.getItem("test_ns")).toEqual(JSON.stringify(hash));
+    });
+
+    it("'set' stores multiple values", function() {
+      storage.set({"item1":"value1","item2":"value2"});
+      expect(storage.get("item1")).toEqual("value1");
+      expect(storage.get("item2")).toEqual("value2");
+    });
+
+    it("'delete' removes a stored item by key", function() {
+      hash = {'itemToDelete':'value'};
+      window.localStorage.setItem("test_ns", JSON.stringify(hash));
+      expect(storage.get("itemToDelete")).toEqual("value");
+      storage.remove("itemToDelete");
+      expect(storage.get("itemToDelete")).toEqual(null);
+    });
+
+    it("'delete' removes multiple stored items by key", function() {
+      storage.set("itemToDelete1", "value1");
+      storage.set("itemToDelete2", "value2");
+      expect(storage.get("itemToDelete1")).toEqual("value1");
+      expect(storage.get("itemToDelete2")).toEqual("value2");
+      storage.remove(["itemToDelete1", "itemToDelete2"]);
+      expect(storage.get("itemToDelete1")).toEqual(null);
+      expect(storage.get("itemToDelete2")).toEqual(null);
+    });
+
+    it("'deleteAll' removes all stored items only in namespace", function() {
+      expect(storage.isEmpty()).toBeTruthy();
+      window.localStorage.setItem("item", "shouldNotBeDeleted");
+      hash = {'itemToDelete1':'value1', 'itemToDelete2':'value2'};
+      window.localStorage.setItem("test_ns", JSON.stringify(hash));
+     
+      expect(storage.get("itemToDelete1")).toEqual("value1");
+      expect(storage.get("itemToDelete2")).toEqual("value2");
+      storage.removeAll();
+      expect(storage.get("itemToDelete1")).toEqual(null);
+      expect(storage.get("itemToDelete1")).toEqual(null);
+      expect(window.localStorage.getItem("item")).toEqual("shouldNotBeDeleted");
+    });
+
+    it("'deleteAll' removes all stored items inside and outside of namespace", function() {
+      expect(storage.isEmpty()).toBeTruthy();
+      window.localStorage.setItem("nonNsItemToDelete", "shouldBeDeleted");
+      hash = {'itemToDelete1':'value1', 'itemToDelete2':'value2'};
+      window.localStorage.setItem("test_ns", JSON.stringify(hash));
+     
+      expect(storage.get("itemToDelete1")).toEqual("value1");
+      expect(storage.get("itemToDelete2")).toEqual("value2");
+      storage.removeAll(true);
+      expect(storage.get("itemToDelete1")).toEqual(null);
+      expect(storage.get("itemToDelete1")).toEqual(null);
+      expect(window.localStorage.getItem("nonNsItemToDelete")).toEqual(null);
+    });
+
+    it("'isEmpty' returns true if there are no items in namespace", function() {
+      window.localStorage.setItem("item", "notInNamespace");
+      storage.removeAll();
+      expect(storage.isEmpty()).toBeTruthy();
+    });
+
+    it("'isEmpty' returns false if there are items in namespace", function() {
+      window.localStorage.clear();
+      hash = {'itemToDelete':'value'};
+      window.localStorage.setItem("test_ns", JSON.stringify(hash));
+      expect(storage.isEmpty()).toBeFalsy();
+    });
+  });
+
+  describe("session storage", function() {   
+    var storage = $.sessionStorage;
+
+    beforeEach(function () {
+      storage.removeAll();
+    });
+
+    it("'keys' returns the keys associated with stored items", function() {
+      storage.set("item1", "value1");
+      storage.set("item2", "value2");
+      expect(storage.keys()).toEqual(["item1", "item2"]);
+    });
+
+    it("'get' retrieves a value by key", function() {
+      window.sessionStorage.setItem("item", "value");
+      expect(storage.get("item")).toEqual("value");
+    });
+
+    it("'get' retrieves values for multiple keys", function() {
+      storage.set("item1", "value1");
+      storage.set("item2", "value2");
+      storage.set("item3", "value3");
+      expect(storage.get(["item1", "item3"])).toEqual({"item1":"value1", "item3":"value3"});
+    });
+
+    it("'set' stores a value", function() {
+      storage.set("item", "value"); 
+      expect(window.sessionStorage.getItem("item")).toEqual("value");
+    });
+
+    it("'set' stores multiple values", function() {
+      storage.set({"item1":"value1","item2":"value2"});
+      expect(storage.get("item1")).toEqual("value1");
+      expect(storage.get("item2")).toEqual("value2");
+    });
+
+    it("'delete' removes a stored item by key", function() {
+      window.sessionStorage.setItem("itemToDelete", "value");
+      expect(storage.get("itemToDelete")).toEqual("value");
+      storage.remove("itemToDelete");
+      expect(storage.get("itemToDelete")).toEqual(null);
+    });
+
+    it("'delete' removes multiple stored items by key", function() {
+      storage.set("itemToDelete1", "value1");
+      storage.set("itemToDelete2", "value2");
+      expect(storage.get("itemToDelete1")).toEqual("value1");
+      expect(storage.get("itemToDelete2")).toEqual("value2");
+      storage.remove(["itemToDelete1", "itemToDelete2"]);
+      expect(storage.get("itemToDelete1")).toEqual(null);
+      expect(storage.get("itemToDelete2")).toEqual(null);
+    });
+
+    it("'deleteAll' removes all stored items", function() {
+      expect(storage.isEmpty()).toBeTruthy();
+      window.sessionStorage.setItem("itemToDelete1", "value1");
+      window.sessionStorage.setItem("itemToDelete2", "value2");
+      expect(storage.get("itemToDelete1")).toEqual("value1");
+      expect(storage.get("itemToDelete2")).toEqual("value2");
+      storage.removeAll();
+      expect(storage.get("itemToDelete1")).toEqual(null);
+      expect(storage.get("itemToDelete1")).toEqual(null);
+    });
+
+    it("'isEmpty' returns true if there are no items in storage", function() {
+      window.sessionStorage.clear();
+      expect(storage.isEmpty()).toBeTruthy();
+    });
+
+    it("'isEmpty' returns false if there are items in storage", function() {
+      window.sessionStorage.setItem("item", "value");
+      expect(storage.isEmpty()).toBeFalsy();
+    });
+  });
+ 
+  if($.cookie) {
+    describe("cookie storage", function() {   
+      var storage = $.cookieStorage;
+
+      beforeEach(function () {
+        storage.removeAll();
+      });
+
+      it("'keys' returns the keys associated with stored items", function() {
+        storage.set("item1", "value1");
+        storage.set("item2", "value2");
+        expect(storage.keys()).toEqual(["item1", "item2"]);
+      });
+
+      it("'get' retrieves a value by key", function() {
+        storage.set("item", "value");
+        expect(storage.get("item")).toEqual("value");
+      });
+
+      it("'get' retrieves values for multiple keys", function() {
+        storage.set("item1", "value1");
+        storage.set("item2", "value2");
+        storage.set("item3", "value3");
+        expect(storage.get(["item1", "item3"])).toEqual({"item1":"value1", "item3":"value3"});
+      });
+      it("'set' stores a value", function() {
+        storage.set("item", "value"); 
+        expect(storage.get("item")).toEqual("value");
+      });
+
+      it("'set' stores multiple values", function() {
+        storage.set({"item1":"value1","item2":"value2"});
+        expect(storage.get("item1")).toEqual("value1");
+        expect(storage.get("item2")).toEqual("value2");
+      });
+
+      it("'delete' removes a stored item by key", function() {
+        storage.set("itemToDelete", "value");
+        expect(storage.get("itemToDelete")).toEqual("value");
+        storage.remove("itemToDelete");
+        expect(storage.get("itemToDelete")).toEqual(null);
+      });
+
+      it("'delete' removes multiple stored items by key", function() {
+        storage.set("itemToDelete1", "value1");
+        storage.set("itemToDelete2", "value2");
+        expect(storage.get("itemToDelete1")).toEqual("value1");
+        expect(storage.get("itemToDelete2")).toEqual("value2");
+        storage.remove(["itemToDelete1", "itemToDelete2"]);
+        expect(storage.get("itemToDelete1")).toEqual(null);
+        expect(storage.get("itemToDelete2")).toEqual(null);
+      });
+
+      it("'deleteAll' removes all stored items", function() {
+        expect(storage.isEmpty()).toBeTruthy();
+        storage.set("itemToDelete1", "value1");
+        storage.set("itemToDelete2", "value2");
+        expect(storage.get("itemToDelete1")).toEqual("value1");
+        expect(storage.get("itemToDelete2")).toEqual("value2");
+        storage.removeAll();
+        expect(storage.get("itemToDelete1")).toEqual(null);
+        expect(storage.get("itemToDelete1")).toEqual(null);
+      });
+
+      it("'isEmpty' returns true if there are no items in storage", function() {
+        storage.removeAll();
+        expect(storage.isEmpty()).toBeTruthy();
+      });
+
+      it("'isEmpty' returns false if there are items in storage", function() {
+        storage.set("item", "value");
+        expect(storage.isEmpty()).toBeFalsy();
+      });
+    });
+  } else {
+    console.log("Skipping $.cookieStorage specs. Could not load JQuery $.cookie.");
+  }
+  */
+});

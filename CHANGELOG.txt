@@ -1,3 +1,10 @@
+1.4.0
+ Add keys(), isEmpty(), isSet() methods on storages
+ Add $.removeAllStorages() method
+ Add $.namespaceStorages variable
+ Some fixes
+ Add Jasmine specs
+
 1.3.1
  Fix on set function with syntax set('foo','foo2','foo3'...,'value')
 
