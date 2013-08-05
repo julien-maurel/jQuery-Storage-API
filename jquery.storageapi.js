@@ -54,7 +54,7 @@
         if(ret===undefined) throw new ReferenceError([].slice.call(a,1,i+1).join('.')+' is not defined in this storage');
       }
       // If last argument is an array, return an object with value for each item in this array
-      // Else return value
+      // Else return value normally
       if($.isArray(a[i])){
         tmp=ret;
         ret={};
@@ -135,7 +135,15 @@
         tmp=tmp[a[i]];
         if(tmp===undefined) throw new ReferenceError([].slice.call(a,1,i).join('.')+' is not defined in this storage');
       }
-      delete tmp[a[i]];
+      // If last argument is an array,remove value for each item in this array
+      // Else remove value normally
+      if($.isArray(a[i])){
+        for(var j in a[i]){
+          delete tmp[a[i][j]];
+        }
+      }else{
+        delete tmp[a[i]];
+      }
       s.setItem(a1,JSON.stringify(to_store));
       return true;
     }
@@ -262,39 +270,29 @@
     set:function(){
       var l=arguments.length,a=arguments,a0=a[0];
       if(l<1 || !$.isPlainObject(a0) && l<2) throw new Error('Minimum 2 arguments must be given or first parameter must be an object');
-      if(!$.isPlainObject(a0)){
+      // If first argument is an object and storage is a namespace storage, set values individually
+      if($.isPlainObject(a0) && this._ns){
+        for(var i in a0){
+          _set(this._type,this._ns,i,a0[i]);
+        }
+        return a0;
+      }else{
         var p=[this._type];
         if(this._ns) p.push(this._ns);
         [].unshift.apply(a,p);
         var r=_set.apply(this,a);
         if(this._ns) return r[a0];
         else return r;
-      }else if(this._ns){
-        for(var i in a0){
-          _set(this._type,this._ns,i,a0[i]);
-        }
-        return a0;
-      }else{
-        return _set(this._type,a0);
       }
     },
     // Delete a variable.
     remove:function(){
       var l=arguments.length,a=arguments,a0=a[0];
       if(l<1) throw new Error('Minimum 1 argument must be given');
-      if(!$.isArray(a0)){
-        var p=[this._type];
-        if(this._ns) p.push(this._ns);
-        [].unshift.apply(a,p);
-        return _remove.apply(this,a);
-      }else if(this._ns){
-        for(var i in a0){
-          _remove(this._type,this._ns,a0[i]);
-        }
-        return true;
-      }else{
-        return _remove(this._type,a0);
-      }
+      var p=[this._type];
+      if(this._ns) p.push(this._ns);
+      [].unshift.apply(a,p);
+      return _remove.apply(this,a);
     },
     // Delete all variable
     removeAll:function(reinit_ns){
