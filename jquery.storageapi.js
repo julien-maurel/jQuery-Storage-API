@@ -179,13 +179,18 @@
       // If more than 1 argument, try to get value and test it
       try{
         var v=_get.apply(this, arguments);
-        return(
-          ($.isPlainObject(v) && $.isEmptyObject(v)) ||
-          ($.isArray(v) && !v.length) ||
-          (!v)
-        );
+        // Convert result to an object (if last argument is an array, _get return already an object) and test each item
+        if(!$.isArray(a[l-1])) v={'totest':v};
+        for(var i in v){
+          if(!(
+            ($.isPlainObject(v[i]) && $.isEmptyObject(v[i])) ||
+            ($.isArray(v[i]) && !v[i].length) ||
+            (!v[i])
+          )) return false;
+        }
+        return true;
       }catch(e){
-        return ((l==1 && $.isEmptyObject(s)) || l>1);
+        return true;
       }
     }
   }
@@ -204,7 +209,12 @@
       // For other case, try to get value and test it
       try{
         var v=_get.apply(this, arguments);
-        return (v!==undefined && v!==null);
+        // Convert result to an object (if last argument is an array, _get return already an object) and test each item
+        if(!$.isArray(a[l-1])) v={'totest':v};
+        for(var i in v){
+          if(!(v[i]!==undefined && v[i]!==null)) return false;
+        }
+        return true;
       }catch(e){
         return false;
       }
@@ -235,7 +245,7 @@
     }
     return keys;
   }
-  
+
   // Create new namespace storage
   function _createNamespace(name){
     if(!name || typeof name!="string") throw new Error('First parameter must be a string');
@@ -257,16 +267,17 @@
   var storage={
     _type:'',
     _ns:'',
-    // Get a variable. If no parameters and storage have a namespace, return all namespace
-    get:function(){
-      var l=arguments.length,a=arguments,a0=a[0],vi;
-      if(l<1) throw new Error('Minimum 1 argument must be given or first parameter must be an object');
-      var p = [this._type];
+    _callMethod:function(f,a){
+      var p=[this._type];
       if(this._ns) p.push(this._ns);
-      [].unshift.apply(a,p);
-      return _get.apply(this, a); 
+      [].push.apply(p,a);
+      return f.apply(this,p);
     },
-    // Set a variable
+    // Get items. If no parameters and storage have a namespace, return all namespace
+    get:function(){
+      return this._callMethod(_get,arguments);
+    },
+    // Set items
     set:function(){
       var l=arguments.length,a=arguments,a0=a[0];
       if(l<1 || !$.isPlainObject(a0) && l<2) throw new Error('Minimum 2 arguments must be given or first parameter must be an object');
@@ -277,24 +288,17 @@
         }
         return a0;
       }else{
-        var p=[this._type];
-        if(this._ns) p.push(this._ns);
-        [].unshift.apply(a,p);
-        var r=_set.apply(this,a);
+        r=this._callMethod(_set,a);
         if(this._ns) return r[a0];
         else return r;
       }
     },
-    // Delete a variable.
+    // Delete items
     remove:function(){
-      var l=arguments.length,a=arguments,a0=a[0];
-      if(l<1) throw new Error('Minimum 1 argument must be given');
-      var p=[this._type];
-      if(this._ns) p.push(this._ns);
-      [].unshift.apply(a,p);
-      return _remove.apply(this,a);
+      if(arguments.length<1) throw new Error('Minimum 1 argument must be given');
+      return this._callMethod(_remove,arguments);
     },
-    // Delete all variable
+    // Delete all items
     removeAll:function(reinit_ns){
       if(this._ns){
         _set(this._type,this._ns,{});
@@ -303,48 +307,18 @@
         return _removeAll(this._type, reinit_ns);
       }
     },
-    // Variable is empty
+    // Items empty
     isEmpty:function(){
-      var l=arguments.length,a=arguments,a0=a[0];
-      if(!$.isArray(a0)){
-        var p=[this._type];
-        if(this._ns) p.push(this._ns);
-        [].unshift.apply(a,p);
-        return _isEmpty.apply(this, a);
-      }else if(this._ns){
-        for(var i in a0){
-          if(!_isEmpty(this._type,this._ns,a0[i])) return false;
-        }
-        return true;
-      }else{
-        return _isEmpty(this._type,a0);
-      }
+      return this._callMethod(_isEmpty,arguments);
     },
-    // Variable exists
+    // Items exists
     isSet:function(){
-      var l=arguments.length,a=arguments,a0=a[0];
-      if(l<1) throw new Error('Minimum 1 argument must be given');
-      if(!$.isArray(a0)){
-        var p=[this._type];
-        if(this._ns) p.push(this._ns);
-        [].unshift.apply(a,p);
-        return _isSet.apply(this, a);
-      }else if(this._ns){
-        for(var i in a0){
-          if(!_isSet(this._type,this._ns,a0[i])) return false;
-        }
-        return true;
-      }else{
-        return _isSet(this._type,a0);
-      }
+      if(arguments.length<1) throw new Error('Minimum 1 argument must be given');
+      return this._callMethod(_isSet,arguments);
     },
-    // Get keys
+    // Get keys of items
     keys:function(){
-      var l=arguments.length,a=arguments;
-      var p=[this._type];
-      if(this._ns) p.push(this._ns);
-      [].unshift.apply(a,p);
-      return _keys.apply(this,a);
+      return this._callMethod(_keys,arguments);
     }
   };
 
@@ -357,13 +331,13 @@
       _prefix:'',
       _expires:null,
       setItem:function(n,v){
-	$.cookie(this._prefix+n,v,{expires:this._expires});
+        $.cookie(this._prefix+n,v,{expires:this._expires});
       },
       getItem:function(n){
-	return $.cookie(this._prefix+n);
+        return $.cookie(this._prefix+n);
       },
       removeItem:function(n){
-	return $.removeCookie(this._prefix+n);
+        return $.removeCookie(this._prefix+n);
       },
       clear:function(){
         for(var key in $.cookie()){
@@ -375,8 +349,8 @@
         }
       },
       setExpires:function(e){
-	this._expires=e;
-	return this;
+        this._expires=e;
+        return this;
       }
     };
     if(!window.localStorage){
@@ -387,7 +361,7 @@
     // cookieStorage API
     $.cookieStorage=$.extend({},storage,{_type:'cookieStorage',setExpires:function(e){window.cookieStorage.setExpires(e); return this;}});
   }
-  
+
   // Get a new API on a namespace
   $.initNamespaceStorage=function(ns){ return _createNamespace(ns); };
   // localStorage API
