@@ -44,7 +44,7 @@ describe("Jquery.StorageApi", function() {
   }
 
   for(var s in storage_types){
-    describe(storage_types[s], function() {   
+    describe(storage_types[s], function() {
       if(storage_types[s].indexOf('ns.')===0){
         var substorage=storage_types[s].substr(3);
         var storage = $.initNamespaceStorage('test_ns')[substorage];
@@ -79,9 +79,9 @@ describe("Jquery.StorageApi", function() {
       afterEach(function () {
         clearAll();
       });
-        
+
       /* Remove tests */
-      it("'removeAll' removes all stored items", function() {
+      it("'removeAll' removes all items", function() {
         wstorage.setItem("itemToDelete1","value1");
         wstorage.setItem("itemToDelete2","value2");
         storage.removeAll();
@@ -89,16 +89,24 @@ describe("Jquery.StorageApi", function() {
         expect(wstorage.getItem("itemToDelete1")).toEqual(null);
         expect(wstorage.getItem("itemToDelete2")).toEqual(null);
       });
-      
-      it("'remove' removes a stored item by key", function() {
+
+      it("'remove' removes one item (by name)", function() {
         wstorage.setItem("itemToDelete","value");
         wstorage.setItem("itemToNotDelete","value");
         storage.remove("itemToDelete");
         expect(wstorage.getItem("itemToDelete")).toEqual(null);
         expect(wstorage.getItem("itemToNotDelete")).toEqual("value");
       });
-      
-      it("'remove' removes multiple stored items by key", function() {
+
+      it("'remove' removes one item (by chain arguments)", function() {
+        wstorage.setItem("itemToDelete",JSON.stringify({"item1":"value1", "item2":"value2"}));
+        wstorage.setItem("itemToNotDelete","value");
+        storage.remove("itemToDelete","item1");
+        expect(JSON.parse(wstorage.getItem("itemToDelete"))).toEqual({"item2":"value2"});
+        expect(wstorage.getItem("itemToNotDelete")).toEqual("value");
+      });
+
+      it("'remove' removes multiple items (by name)", function() {
         wstorage.setItem("itemToDelete1","value1");
         wstorage.setItem("itemToDelete2","value2");
         wstorage.setItem("itemToNotDelete","value");
@@ -107,82 +115,87 @@ describe("Jquery.StorageApi", function() {
         expect(storage.get("itemToDelete2")).toEqual(null);
         expect(storage.get("itemToNotDelete")).toEqual("value");
       });
-      
-      it("'remove' removes a stored item by chain parameters", function() {
-        wstorage.setItem("itemToDelete",JSON.stringify({"item1":"value1", "item2":"value2"}));
+
+      it("'remove' removes multiple items (by chain arguments)", function() {
+        wstorage.setItem("itemToDelete",JSON.stringify({"item1":"value1", "item2":"value2", "item3":"value3"}));
         wstorage.setItem("itemToNotDelete","value");
-        storage.remove("itemToDelete","item1");
-        expect(JSON.parse(wstorage.getItem("itemToDelete"))).toEqual({"item2":"value2"});
+        storage.remove("itemToDelete",["item1","item2"]);
+        expect(JSON.parse(wstorage.getItem("itemToDelete"))).toEqual({"item3":"value3"});
         expect(wstorage.getItem("itemToNotDelete")).toEqual("value");
       });
 
-      
+
       /* Set tests */
-      it("'set' stores a value", function() {
-        var ret=storage.set("item", "value"); 
+      it("'set' stores one item (by name)", function() {
+        var ret=storage.set("item", "value");
         expect(ret).toEqual("value");
         expect(wstorage.getItem("item")).toEqual("value");
       });
-      
-      it("'set' stores multiple values", function() {
+
+      it("'set' stores one item (by chain arguments)", function() {
+        var ret=storage.set("item", "itemprop", "value");
+        expect(ret).toEqual({"itemprop":"value"});
+        expect(JSON.parse(wstorage.getItem("item"))).toEqual({"itemprop":"value"});
+      });
+
+      it("'set' stores multiple items (by name)", function() {
         var ret=storage.set({"item1":"value1","item2":"value2"});
         expect(ret).toEqual({"item1":"value1","item2":"value2"});
         expect(wstorage.getItem("item1")).toEqual("value1");
         expect(wstorage.getItem("item2")).toEqual("value2");
       });
-      
-      it("'set' stores a value by chain parameters", function() {
-        var ret=storage.set("item", "itemprop", "value");
-        expect(ret).toEqual({"itemprop":"value"});
-        expect(JSON.parse(wstorage.getItem("item"))).toEqual({"itemprop":"value"});
-      });
-      
-      
+
+
       /* Get tests */
-      it("'get' retrieves a value by key", function() {
+      it("'get' retrieves one item (by name)", function() {
         storage.set("item", "value");
         expect(storage.get("item")).toEqual("value");
       });
-      
-      it("'get' retrieves values for multiple keys", function() {
+
+      it("'get' retrieves one item (by chain arguments)", function() {
+        storage.set("item", "itemprop", "value");
+        expect(storage.get("item", "itemprop")).toEqual("value");
+      });
+
+      it("'get' retrieves multiple items (by name)", function() {
         storage.set("item1", "value1");
         storage.set("item2", "value2");
         storage.set("item3", "value3");
         expect(storage.get(["item1", "item3"])).toEqual({"item1":"value1", "item3":"value3"});
       });
-      
-      it("'get' retrieves values by chain parameters", function() {
-        storage.set("item", "itemprop", "value");
-        expect(storage.get("item", "itemprop")).toEqual("value");
+
+      it("'get' retrieves multiple items (by chain arguments)", function() {
+        storage.set("item", {"itemprop1":"value1","itemprop2":"value2","itemprop3":"value3"});
+        expect(storage.get("item",["itemprop1","itemprop3"])).toEqual({"itemprop1":"value1", "itemprop3":"value3"});
       });
-      
-      
+
+
       /* Keys tests */
       it("'keys' returns the keys associated with a storage", function() {
         storage.set("item1", "value1");
         storage.set("item2", "value2");
         expect(storage.keys()).toEqual(["item1", "item2"]);
       });
-      
-      it("'keys' returns the keys associated with an item in a storage", function() {
+
+      it("'keys' returns the keys associated with an item in a storage (by name)", function() {
         storage.set("item", {"item1":"value1", "item2":"value2"});
         expect(storage.keys("item")).toEqual(["item1", "item2"]);
       });
-      
-      it("'keys' returns the keys associated with an item in a storage by chain parameters", function() {
+
+      it("'keys' returns the keys associated with an item in a storage (by chain arguments)", function() {
         storage.set("item", "itemprop", {"item1":"value1", "item2":"value2"});
         expect(storage.keys("item","itemprop")).toEqual(["item1", "item2"]);
       });
-      
-      
+
+
       /* isEmpty tests */
-      it("'isEmpty' returns true if there are no items in storage", function() {
+      it("'isEmpty' returns true if there is no items in storage", function() {
         expect(storage.isEmpty()).toBeTruthy();
         storage.set("item", "value");
         expect(storage.isEmpty()).toBeFalsy();
       });
-      
-      it("'isEmpty' returns true if item in storage is empty", function() {
+
+      it("'isEmpty' returns true if item in storage is empty (by name)", function() {
         storage.set("item1", "value");
         storage.set("item2", "");
         storage.set("item3", []);
@@ -197,22 +210,29 @@ describe("Jquery.StorageApi", function() {
         expect(storage.isEmpty("item6")).toBeFalsy();
       });
 
-      it("'isEmpty' returns true if multiple items in storage are empty", function() {
-        storage.set({"item1":"value1","item2":"value2","item3":"","item4":""});
-        expect(storage.isEmpty(["item1","item2"])).toBeFalsy();
-        expect(storage.isEmpty(["item3","item4"])).toBeTruthy();
-        expect(storage.isEmpty(["item1","item3"])).toBeFalsy();
-      });
-      
-      it("'isEmpty' returns true if item in storage is empty by chain parameters", function() {
+      it("'isEmpty' returns true if item in storage is empty (by chain arguments)", function() {
         storage.set("item", "prop1", "value1");
         expect(storage.isEmpty("item","prop1")).toBeFalsy();
         expect(storage.isEmpty("item","prop2")).toBeTruthy();
       });
 
+      it("'isEmpty' returns true if multiple items in storage are empty (by name)", function() {
+        storage.set({"item1":"value1","item2":"value2","item3":"","item4":""});
+        expect(storage.isEmpty(["item1","item2"])).toBeFalsy();
+        expect(storage.isEmpty(["item3","item4"])).toBeTruthy();
+        expect(storage.isEmpty(["item1","item3"])).toBeFalsy();
+      });
+
+      it("'isEmpty' returns true if multiple items in storage are empty (by chain arguments)", function() {
+        storage.set("item1","prop1",{"item1":"value1","item2":"value2","item3":"","item4":""});
+        expect(storage.isEmpty("item1","prop1",["item1","item2"])).toBeFalsy();
+        expect(storage.isEmpty("item1","prop1",["item3","item4"])).toBeTruthy();
+        expect(storage.isEmpty("item1","prop1",["item1","item3"])).toBeFalsy();
+      });
+
 
       /* isSet tests */
-      it("'isSet' returns true if item in storage exists", function() {
+      it("'isSet' returns true if item in storage exists (by name)", function() {
         storage.set("item1", "value");
         storage.set("item2", null);
         storage.set("item3", "");
@@ -222,17 +242,24 @@ describe("Jquery.StorageApi", function() {
         expect(storage.isSet("item4")).toBeFalsy();
       });
 
-      it("'isSet' returns true if multiple items in storage exist", function() {
+      it("'isSet' returns true if item in storage exists (by chain arguments)", function() {
+        storage.set("item", "prop1", "value1");
+        expect(storage.isSet("item","prop1")).toBeTruthy();
+        expect(storage.isSet("item","prop2")).toBeFalsy();
+      });
+
+      it("'isSet' returns true if multiple items in storage exist (by name)", function() {
         storage.set({"item1":"value1","item2":"value2","item3":"","item4":null});
         expect(storage.isSet(["item1","item2"])).toBeTruthy();
         expect(storage.isSet(["item1","item3"])).toBeTruthy();
         expect(storage.isSet(["item1","item4"])).toBeFalsy();
       });
 
-      it("'isSet' returns true if item in storage exists by chain parameters", function() {
-        storage.set("item", "prop1", "value1");
-        expect(storage.isSet("item","prop1")).toBeTruthy();
-        expect(storage.isSet("item","prop2")).toBeFalsy();
+      it("'isSet' returns true if multiple items in storage exist (by chain arguments)", function() {
+        storage.set("item1","prop1",{"item1":"value1","item2":"value2","item3":"","item4":null});
+        expect(storage.isSet("item1","prop1",["item1","item2"])).toBeTruthy();
+        expect(storage.isSet("item1","prop1",["item1","item3"])).toBeTruthy();
+        expect(storage.isSet("item1","prop1",["item1","item4"])).toBeFalsy();
       });
     });
   }
