@@ -1,3 +1,8 @@
+1.5.0
+ On "infinite arguments mode", add possibility to have an array/object on last argument on get, set, remove, isEmpty, isSet methods
+ Simplify code
+ Some fixes
+
 1.4.0
  Add keys(), isEmpty(), isSet() methods on storages
  Add $.removeAllStorages() method

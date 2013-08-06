@@ -36,21 +36,23 @@ Public methods are usable on all storage objects ($.localStorage, $.sessionStora
     storage=$.localStorage
 
 ### `get()`
-Get an item from a storage
+Get an item from a storage.  
+If last argument is an array (can be preceded by other arguments to parse storage), get() return an object with value for each item of this array.
 
-    storage.get('foo') // Get storage.foo
-    storage.get('foo','foo2','foo3'...) // Get storage.foo.foo2.foo3...
-    storage.get(['foo','foo2']) // Get storage.foo and storage.foo2 in an object ({foo:storage.foo,foo2:storage.foo2})
+    storage.get('foo') // Return storage.foo
+    storage.get('foo','foo2','foo3'...) // Return storage.foo.foo2.foo3...
+    storage.get(['foo','foo2']) // Return {foo:storage.foo,foo2:storage.foo2}
 
 ### `set()`
-Set an item in a storage
+Set an item in a storage.  
+If argument is an object, set() set value on storage for each property of this object.
 
     storage.set('foo','value') // Set storage.foo to "value"
     storage.set('foo','foo2','foo3'...,'value') // Set storage.foo.foo2.foo3... to "value"
     storage.set({'foo':'value,'foo2':'value2'}) // Set storage.foo to "value" and storage.foo2 to "value2"
 
 ### `keys()`
-Get keys of a storage or an item in a storage
+Get keys of a storage or an item in a storage.
 
     storage.set('foo','value')
     storage.set('foo2','foo3'..., {'foo4':'value4,'foo5':'value5'})
@@ -59,7 +61,8 @@ Get keys of a storage or an item in a storage
     storage.keys('foo2','foo3'...) // Return keys of storage.foo2.foo3... (["foo4", "foo5"])
 
 ### `isEmpty()`
-Check if a storage or an item in a storage is empty (if equal to "", 0, null, undefined, [] or {})
+Check if a storage or an item in a storage is empty (if equal to "", 0, null, undefined, [] or {}).  
+If last argument is an array (can be preceded by other arguments to parse storage), isEmpty() test storage for each item of this array, and return true only if all test return true.
 
     storage.set('foo','value')
     storage.set('foo2','foo3'..., {'foo4':'value4,'foo5':'value5'})
@@ -74,7 +77,8 @@ Check if a storage or an item in a storage is empty (if equal to "", 0, null, un
     storage.isEmpty(['foo6','foo7']) // Check if storage.foo6 and storage.foo7 are empty (true)
 
 ### `isSet()`
-Check if an item exists in a storage (if different of null and undefined)
+Check if an item exists in a storage (if different of null and undefined).  
+If last argument is an array (can be preceded by other arguments to parse storage), isSet() test storage for each item of this array, and return true only if all test return true.
 
     storage.set('foo','value')
     storage.set('foo2','foo3'..., {'foo4':'value4,'foo5':'value5'})
@@ -87,7 +91,8 @@ Check if an item exists in a storage (if different of null and undefined)
     storage.isSet(['foo','foo7']) // Check if storage.foo and storage.foo7 exist (false)
 
 ### `remove()`
-Delete an item from a storage
+Delete an item from a storage.  
+If last argument is an array (can be preceded by other arguments to parse storage), remove() remove value of storage for each item of this array.
 
     storage.remove('foo') // Delete storage.foo
     storage.remove('foo','foo2','foo3'...) // Delete storage.foo.foo2.foo3...
