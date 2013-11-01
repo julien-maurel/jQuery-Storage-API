@@ -1,3 +1,6 @@
+1.6.0
+ Add methods setPath, setDomain, setConf, setDefaultConf to cookie storage
+
 1.5.0
  On "infinite arguments mode", add possibility to have an array/object on last argument on get, set, remove, isEmpty, isSet methods
  Simplify code

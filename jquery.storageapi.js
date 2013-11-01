@@ -9,7 +9,7 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.5.0
+ * Version: 1.6.0
  *
  */
 (function($){
@@ -330,8 +330,10 @@
       _cookie:true,
       _prefix:'',
       _expires:null,
+      _path:null,
+      _domain:null,
       setItem:function(n,v){
-        $.cookie(this._prefix+n,v,{expires:this._expires});
+        $.cookie(this._prefix+n,v,{expires:this._expires,path:this._path,domain:this._domain});
       },
       getItem:function(n){
         return $.cookie(this._prefix+n);
@@ -351,6 +353,23 @@
       setExpires:function(e){
         this._expires=e;
         return this;
+      },
+      setPath:function(p){
+        this._path=p;
+        return this;
+      },
+      setDomain:function(d){
+        this._domain=d;
+        return this;
+      },
+      setConf:function(c){
+        if(c.path) this._path=c.path;
+        if(c.domain) this._domain=c.domain;
+        if(c.expires) this._expires=c.expires;
+        return this;
+      },
+      setDefaultConf:function(){
+        this._path=this._domain=this._expires=null;
       }
     };
     if(!window.localStorage){
@@ -359,7 +378,14 @@
     }
     window.cookieStorage=$.extend({},cookie_storage);
     // cookieStorage API
-    $.cookieStorage=$.extend({},storage,{_type:'cookieStorage',setExpires:function(e){window.cookieStorage.setExpires(e); return this;}});
+    $.cookieStorage=$.extend({},storage,{
+      _type:'cookieStorage',
+      setExpires:function(e){window.cookieStorage.setExpires(e); return this;},
+      setPath:function(p){window.cookieStorage.setPath(p); return this;},
+      setDomain:function(d){window.cookieStorage.setDomain(d); return this;},
+      setConf:function(c){window.cookieStorage.setConf(c); return this;},
+      setDefaultConf:function(){window.cookieStorage.setDefaultConf(); return this;}
+    });
   }
 
   // Get a new API on a namespace
