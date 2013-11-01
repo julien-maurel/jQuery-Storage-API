@@ -105,7 +105,7 @@ Truncate the storage
     storage.removeAll(true) // Only on global storages. Delete all items from the storage and reinitialize previously initialized namespaces
 
 ### `setExpires()`
-Only on cookieStorage. Set expires date in days (default value is null, cookie is valid for session only; only cookies setted after setExpires() call will be affected) 
+Only on cookieStorage. Set expires date in days (default value is null, cookie is valid for session only; only cookies setted after setExpires() call will be affected).
 
     storage.setExpires(10) // Set expiry date to today + 10 days
 
@@ -114,7 +114,7 @@ This method return the storage object, so you can do :
     storage.setExpires(10).set('foo','value') // Set expiry date to today + 10 days and set a new cookie
 
 ### `setPath()`
-Only on cookieStorage. Set path for cookies (default value is null; only cookies setted after setPath() call will be affected) 
+Only on cookieStorage. Set path for cookies (default value is null; only cookies setted after setPath() call will be affected).
 
     storage.setPath('/') // Set path to '/'
 
@@ -123,7 +123,7 @@ This method return the storage object, so you can do :
     storage.setPath('/').set('foo','value') // Set path to '/' and set a new cookie
 
 ### `setDomain()`
-Only on cookieStorage. Set domain for cookies (default value is null; only cookies setted after setDomain() call will be affected) 
+Only on cookieStorage. Set domain for cookies (default value is null; only cookies setted after setDomain() call will be affected).
 
     storage.setDomain('www.ndd.com') // Set domain to www.ndd.com
 
@@ -132,7 +132,7 @@ This method return the storage object, so you can do :
     storage.setDomain('www.ndd.com').set('foo','value') // Set domain to www.ndd.com and set a new cookie
 
 ### `setConf()`
-Only on cookieStorage. Set cookie configuration with an object (only cookies setted after setConf() call will be affected) 
+Only on cookieStorage. Set cookie configuration with an object (only cookies setted after setConf() call will be affected).
 
     storage.setConf({path:'/',expires:10,'domain':'www.ndd.com'}) // Set expiry date, domain and path
 
@@ -141,7 +141,7 @@ This method return the storage object, so you can do :
     storage.setConf({path:'/',expires:10}).set('foo','value') // Set configuration and set a new cookie
 
 ### `setDefaultConf()`
-Only on cookieStorage. Set default configuration (only cookies setted after setDefaultConf() call will be affected) 
+Only on cookieStorage. Set default configuration (only cookies setted after setDefaultConf() call will be affected).
 
     storage.setDefaultConf() // Set path, domain and expiry date to null
 
