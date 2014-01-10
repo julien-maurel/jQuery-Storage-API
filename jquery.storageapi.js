@@ -319,6 +319,25 @@
     // Get keys of items
     keys:function(){
       return this._callMethod(_keys,arguments);
+    },
+    saveForm:function(form) {
+      var data = $(form).serializeArray();
+      if (!data) return false;
+      for(var i in data) {
+        var item = data[i];
+        this.set(item.name, item.value);
+      }
+      return true;
+    },
+    restoreForm:function(form) {
+      var $form = $(form);
+      var data = $form.serializeArray();
+      if (!data) return false;
+      for (var i in data) {
+        var item = data[i];
+        if (this.isSet(item.name)) $form.find('[name="'+item.name+'"]').val(this.get(item.name))
+      }
+      return true;
     }
   };
 
