@@ -1,3 +1,7 @@
+1.7.0
+ Add support of js syntax on all methods
+ Add bower.json
+ 
 1.6.0
  Add methods setPath, setDomain, setConf, setDefaultConf to cookie storage
 

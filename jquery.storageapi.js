@@ -9,7 +9,7 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.6.0
+ * Version: 1.7.0
  *
  */
 (function($){
@@ -268,8 +268,12 @@
     _type:'',
     _ns:'',
     _callMethod:function(f,a){
-      var p=[this._type];
+      var p=[this._type],a=Array.prototype.slice.call(a),a0=a[0];
       if(this._ns) p.push(this._ns);
+      if(typeof a0==='string' && a0.indexOf('.')!==-1){
+        a.shift();
+        [].unshift.apply(a,a0.split('.'));
+      }
       [].push.apply(p,a);
       return f.apply(this,p);
     },
@@ -289,7 +293,7 @@
         return a0;
       }else{
         r=this._callMethod(_set,a);
-        if(this._ns) return r[a0];
+        if(this._ns) return r[a0.split('.')[0]];
         else return r;
       }
     },

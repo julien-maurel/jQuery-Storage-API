@@ -40,6 +40,7 @@ Get an item from a storage.
 If last argument is an array (can be preceded by other arguments to parse storage), get() return an object with value for each item of this array.
 
     storage.get('foo') // Return storage.foo
+    storage.get('foo.foo2.foo3...') // Return storage.foo.foo2.foo3...
     storage.get('foo','foo2','foo3'...) // Return storage.foo.foo2.foo3...
     storage.get(['foo','foo2']) // Return {foo:storage.foo,foo2:storage.foo2}
 
@@ -48,6 +49,7 @@ Set an item in a storage.
 If argument is an object, set() set value on storage for each property of this object.
 
     storage.set('foo','value') // Set storage.foo to "value"
+    storage.set('foo.foo2.foo3...','value') // Set storage.foo.foo2.foo3... to "value"
     storage.set('foo','foo2','foo3'...,'value') // Set storage.foo.foo2.foo3... to "value"
     storage.set({'foo':'value,'foo2':'value2'}) // Set storage.foo to "value" and storage.foo2 to "value2"
 
@@ -58,6 +60,7 @@ Get keys of a storage or an item in a storage.
     storage.set('foo2','foo3'..., {'foo4':'value4,'foo5':'value5'})
     storage.keys() // Return keys of storage (["foo", "foo2"])
     storage.keys('foo2') // Return keys of storage.foo2 (["foo3"])
+    storage.keys('foo2.foo3...') // Return keys of storage.foo2.foo3... (["foo4", "foo5"])
     storage.keys('foo2','foo3'...) // Return keys of storage.foo2.foo3... (["foo4", "foo5"])
 
 ### `isEmpty()`
@@ -71,10 +74,12 @@ If last argument is an array (can be preceded by other arguments to parse storag
     storage.isEmpty('foo') // Check if storage.foo is empty (false)
     storage.isEmpty('foo6') // Check if storage.foo6 is empty (true)
     storage.isEmpty('foo7') // Check if storage.foo7 is empty (true)
+    storage.isEmpty('foo2.foo3...') // Check if storage.foo2.foo3... is empty (false)
     storage.isEmpty('foo2','foo3'...) // Check if storage.foo2.foo3... is empty (false)
     storage.isEmpty(['foo','foo2']) // Check if storage.foo and storage.foo2 are empty (false)
     storage.isEmpty(['foo','foo7']) // Check if storage.foo and storage.foo7 are empty (false)
     storage.isEmpty(['foo6','foo7']) // Check if storage.foo6 and storage.foo7 are empty (true)
+    storage.isEmpty('foo2','foo3'...,['foo6','foo7']) // Check if storage.foo2.foo3...foo6 and storage.foo2.foo3...foo7 are empty (true)
 
 ### `isSet()`
 Check if an item exists in a storage (if different of null and undefined).  
@@ -86,15 +91,18 @@ If last argument is an array (can be preceded by other arguments to parse storag
     storage.isSet('foo') // Check if storage.foo exists (true)
     storage.isSet('foo6') // Check if storage.foo6 exists (true)
     storage.isSet('foo7') // Check if storage.foo7 exists (false)
+    storage.isSet('foo2.foo3'...) // Check if storage.foo2.foo3... exists (true)
     storage.isSet('foo2','foo3'...) // Check if storage.foo2.foo3... exists (true)
     storage.isSet(['foo','foo2']) // Check if storage.foo and storage.foo2 exist (true)
     storage.isSet(['foo','foo7']) // Check if storage.foo and storage.foo7 exist (false)
+    storage.isSet('foo2','foo3'...,['foo6','foo7']) // Check if storage.foo2.foo3...foo6 and storage.foo2.foo3...foo7 exist (false)
 
 ### `remove()`
 Delete an item from a storage.  
 If last argument is an array (can be preceded by other arguments to parse storage), remove() remove value of storage for each item of this array.
 
     storage.remove('foo') // Delete storage.foo
+    storage.remove('foo.foo2.foo3'...) // Delete storage.foo.foo2.foo3...
     storage.remove('foo','foo2','foo3'...) // Delete storage.foo.foo2.foo3...
     storage.remove(['foo','foo2']) // Delete storage.foo and storage.foo2
 
