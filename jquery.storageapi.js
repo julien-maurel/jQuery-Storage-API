@@ -292,7 +292,7 @@
         }
         return a0;
       }else{
-        r=this._callMethod(_set,a);
+        var r=this._callMethod(_set,a);
         if(this._ns) return r[a0.split('.')[0]];
         else return r;
       }
