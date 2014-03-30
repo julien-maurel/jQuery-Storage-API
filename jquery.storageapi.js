@@ -9,7 +9,7 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.7.0
+ * Version: 1.7.1
  *
  */
 (function($){
@@ -249,8 +249,13 @@
   // Create new namespace storage
   function _createNamespace(name){
     if(!name || typeof name!="string") throw new Error('First parameter must be a string');
-    if(!window.localStorage.getItem(name)) window.localStorage.setItem(name,'{}');
-    if(!window.sessionStorage.getItem(name)) window.sessionStorage.setItem(name,'{}');
+    if(window.localStorage){
+      if(!window.localStorage.getItem(name)) window.localStorage.setItem(name,'{}');
+      if(!window.sessionStorage.getItem(name)) window.sessionStorage.setItem(name,'{}');
+    }else{
+      if(!window.localCookieStorage.getItem(name)) window.localCookieStorage.setItem(name,'{}');
+      if(!window.sessionCookieStorage.getItem(name)) window.sessionCookieStorage.setItem(name,'{}');
+    }
     var ns={
       localStorage:$.extend({},$.localStorage,{_ns:name}),
       sessionStorage:$.extend({},$.sessionStorage,{_ns:name})
@@ -377,8 +382,8 @@
       }
     };
     if(!window.localStorage){
-      window.localStorage=$.extend({},cookie_storage,{_prefix:cookie_local_prefix,_expires:365*10});
-      window.sessionStorage=$.extend({},cookie_storage,{_prefix:cookie_session_prefix+window.name+'_'});
+      window.localCookieStorage=$.extend({},cookie_storage,{_prefix:cookie_local_prefix,_expires:365*10});
+      window.sessionCookieStorage=$.extend({},cookie_storage,{_prefix:cookie_session_prefix+window.name+'_'});
     }
     window.cookieStorage=$.extend({},cookie_storage);
     // cookieStorage API
@@ -394,10 +399,17 @@
 
   // Get a new API on a namespace
   $.initNamespaceStorage=function(ns){ return _createNamespace(ns); };
-  // localStorage API
-  $.localStorage=$.extend({},storage,{_type:'localStorage'});
-  // sessionStorage API
-  $.sessionStorage=$.extend({},storage,{_type:'sessionStorage'});
+  if (window.localStorage) {
+    // localStorage API
+    $.localStorage=$.extend({},storage,{_type:'localStorage'});
+    // sessionStorage API
+    $.sessionStorage=$.extend({},storage,{_type:'sessionStorage'});
+  }else{
+    // localStorage API
+    $.localStorage=$.extend({},storage,{_type:'localCookieStorage'});
+    // sessionStorage API
+    $.sessionStorage=$.extend({},storage,{_type:'sessionCookieStorage'});
+  }
   // List of all namespace storage
   $.namespaceStorages={};
   // Remove all items in all storages
