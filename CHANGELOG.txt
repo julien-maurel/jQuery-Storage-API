@@ -1,3 +1,6 @@
+1.7.1
+ If cookie fallback, don't override window.localStorage/sessionStorage but use window.localCookieStorage/sessionCookieStorage
+ 
 1.7.0
  Add support of js syntax on all methods
  Add bower.json

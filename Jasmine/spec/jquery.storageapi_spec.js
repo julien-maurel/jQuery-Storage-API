@@ -1,6 +1,11 @@
+function getWindowStorage(name){
+  if(window[name]) return window[name];
+  return window[name.replace('Storage','CookieStorage')];
+}
+
 function clearAll(){
-  window.localStorage.clear();
-  window.sessionStorage.clear();
+  wl.clear();
+  ws.clear();
   if($.cookie){
     for(var key in $.cookie()){
       if(key!='') {
@@ -9,20 +14,30 @@ function clearAll(){
     }
   }
 }
+
+wl=getWindowStorage('localStorage');
+ws=getWindowStorage('sessionStorage');
 clearAll();
 
 describe("Jquery.StorageApi", function() {
   /* Basic tests */
   describe('Basics',function(){
-    it("Storage are natively avalaible or cookie fallback is enable", function() {
-      expect(window.localStorage).toEqual(jasmine.any(Object));
-      expect(window.sessionStorage).toEqual(jasmine.any(Object));
-    });
+    if(window.localStorage){
+      it("Storage are natively avalaible", function() {
+        expect(window.localStorage).toEqual(jasmine.any(Object));
+        expect(window.sessionStorage).toEqual(jasmine.any(Object));
+      });
+    }else{
+      it("Storage are not natively avalaible but cookie fallback is enable", function() {
+        expect(wl).toEqual(jasmine.any(Object));
+        expect(ws).toEqual(jasmine.any(Object));
+      });
+    }
     it("'createNamespace' create a new namespace in all storages",function(){
       var ns=$.initNamespaceStorage('test_ns');
       expect($.namespaceStorages['test_ns']).toEqual(ns);
-      expect(window.localStorage.getItem('test_ns')).toEqual("{}");
-      expect(window.sessionStorage.getItem('test_ns')).toEqual("{}");
+      expect(wl.getItem('test_ns')).toEqual("{}");
+      expect(ws.getItem('test_ns')).toEqual("{}");
       if($.cookie) {
         expect(window.cookieStorage.getItem('test_ns')).toEqual("{}");
       }
@@ -50,7 +65,7 @@ describe("Jquery.StorageApi", function() {
         var storage = $.initNamespaceStorage('test_ns')[substorage];
         var wstorage = {
           getItem:function(n){
-            var ret=window[substorage].getItem('test_ns');
+            var ret=getWindowStorage(substorage).getItem('test_ns');
             ret=JSON.parse(ret);
             ret=ret[n];
             if(typeof ret=="object") return JSON.stringify(ret);
@@ -58,19 +73,19 @@ describe("Jquery.StorageApi", function() {
             return ret;
           },
           setItem:function(n,v){
-            var ret=JSON.parse(window[substorage].getItem('test_ns'));
+            var ret=JSON.parse(getWindowStorage(substorage).getItem('test_ns'));
             try{
               v=JSON.parse(v);
             }catch(e){
             }
             ret[n]=v;
-            window[substorage].setItem('test_ns',JSON.stringify(ret));
+            getWindowStorage(substorage).setItem('test_ns',JSON.stringify(ret));
           }
         };
       }else{
         var substorage=false;
         var storage = $[storage_types[s]];
-        var wstorage = window[storage_types[s]];
+        var wstorage = getWindowStorage(storage_types[s]);
       }
 
       beforeEach(function () {
