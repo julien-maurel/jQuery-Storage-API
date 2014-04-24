@@ -1,8 +1,20 @@
 function getWindowStorage(name){
-  if(window[name]) return window[name];
+  if(testStorage(name)) return window[name];
   return window[name.replace('Storage','CookieStorage')];
 }
 
+function testStorage(name){
+  if(!window[name]) return false;
+  var foo='jsapi';
+  try{
+    window[name].setItem(foo,foo);
+    window[name].removeItem(foo);
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+  
 function clearAll(){
   wl.clear();
   ws.clear();
@@ -22,7 +34,7 @@ clearAll();
 describe("Jquery.StorageApi", function() {
   /* Basic tests */
   describe('Basics',function(){
-    if(window.localStorage){
+    if(testStorage('localStorage')){
       it("Storage are natively avalaible", function() {
         expect(window.localStorage).toEqual(jasmine.any(Object));
         expect(window.sessionStorage).toEqual(jasmine.any(Object));

@@ -9,7 +9,7 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.7.1
+ * Version: 1.7.2
  *
  */
 (function($){
@@ -249,7 +249,7 @@
   // Create new namespace storage
   function _createNamespace(name){
     if(!name || typeof name!="string") throw new Error('First parameter must be a string');
-    if(window.localStorage){
+    if(storage_available){
       if(!window.localStorage.getItem(name)) window.localStorage.setItem(name,'{}');
       if(!window.sessionStorage.getItem(name)) window.sessionStorage.setItem(name,'{}');
     }else{
@@ -268,6 +268,22 @@
     return ns;
   }
 
+  // Test if storage is natively available on browser
+  function _testStorage(name){
+    if(!window[name]) return false;
+    var foo='jsapi';
+    try{
+      window[name].setItem(foo,foo);
+      window[name].removeItem(foo);
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+  
+  // Check if storages are natively available on browser
+  var storage_available=_testStorage('localStorage');
+  
   // Namespace object
   var storage={
     _type:'',
@@ -381,7 +397,7 @@
         this._path=this._domain=this._expires=null;
       }
     };
-    if(!window.localStorage){
+    if(!storage_available){
       window.localCookieStorage=$.extend({},cookie_storage,{_prefix:cookie_local_prefix,_expires:365*10});
       window.sessionCookieStorage=$.extend({},cookie_storage,{_prefix:cookie_session_prefix+window.name+'_'});
     }
@@ -399,7 +415,7 @@
 
   // Get a new API on a namespace
   $.initNamespaceStorage=function(ns){ return _createNamespace(ns); };
-  if (window.localStorage) {
+  if(storage_available) {
     // localStorage API
     $.localStorage=$.extend({},storage,{_type:'localStorage'});
     // sessionStorage API
