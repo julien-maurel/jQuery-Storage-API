@@ -9,10 +9,21 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.7.2
+ * Version: 1.7.3
  *
  */
-(function($){
+(function (factory) {
+  if(typeof define==='function' && define.amd){
+    // AMD
+    define(['jquery'],factory);
+  }else if(typeof exports==='object') {
+    // CommonJS
+    factory(require('jquery'));
+  }else {
+    // Browser globals
+    factory(jQuery);
+  }
+}(function($){
   // Prefix to use with cookie fallback
   var cookie_local_prefix="ls_";
   var cookie_session_prefix="ss_";
@@ -437,4 +448,4 @@
       $.namespaceStorages={};
     }
   }
-})(jQuery);
+}));

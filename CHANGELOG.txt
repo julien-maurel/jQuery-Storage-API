@@ -1,3 +1,6 @@
+1.7.3
+  Add AMD/CommonJS compatibility
+
 1.7.2
  Change test that check if storage are natively available or not
   
