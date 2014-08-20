@@ -281,9 +281,9 @@
 
   // Test if storage is natively available on browser
   function _testStorage(name){
-    if(!window[name]) return false;
     var foo='jsapi';
     try{
+      if(!window[name]) return false;
       window[name].setItem(foo,foo);
       window[name].removeItem(foo);
       return true;
