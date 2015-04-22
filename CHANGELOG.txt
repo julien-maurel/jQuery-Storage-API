@@ -1,3 +1,6 @@
+1.7.4
+  Fix min version
+
 1.7.3
   Add AMD/CommonJS compatibility
 
