@@ -242,7 +242,7 @@
     }else{
       o=s;
     }
-    if(o._cookie){
+    if(o && o._cookie){
       // If storage is a cookie, use $.cookie to retrieve keys
       for(var key in $.cookie()){
         if(key!='') {
