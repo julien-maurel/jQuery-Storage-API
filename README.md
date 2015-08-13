@@ -1,14 +1,14 @@
 jQuery Storage API
 ==================
 
-jQuery Storage API is a plugin that simplify access to storages (HTML5) & cookies, add namespace storage functionality and provide compatiblity for old browsers with cookies!
+jQuery Storage API is a plugin that simplifies access to storages (HTML5), cookies, and namespace storage functionality and provides compatiblity for old browsers with cookies!
 
 Functionalities:
 * To store object easily, encode/decode it with JSON automatically
 * Ability to define namespace and use it as a specific storage
 * Magic getter and setter to have access at an infinite object level with one call
 * Add jquery.cookie and manage your cookies with this API
-* You want use storage on old browsers? Add jquery.cookie & JSON and JQuery Storage API use cookies to simulate storage!
+* You want use storage on old browsers? Add jquery.cookie & JSON and jQuery Storage API uses cookies to simulate storage!
 
 
 Storages
@@ -37,7 +37,7 @@ Public methods are usable on all storage objects ($.localStorage, $.sessionStora
 
 ### `get()`
 Get an item from a storage.  
-If last argument is an array (can be preceded by other arguments to parse storage), get() return an object with value for each item of this array.
+If last argument is an array (can be preceded by other arguments to parse storage), get() returns an object with value for each item of this array.
 
     storage.get('foo') // Return storage.foo
     storage.get('foo.foo2.foo3...') // Return storage.foo.foo2.foo3...
@@ -46,7 +46,7 @@ If last argument is an array (can be preceded by other arguments to parse storag
 
 ### `set()`
 Set an item in a storage.  
-If argument is an object, set() set value on storage for each property of this object.
+If argument is an object, set() sets value on storage for each property of this object.
 
     storage.set('foo','value') // Set storage.foo to "value"
     storage.set('foo.foo2.foo3...','value') // Set storage.foo.foo2.foo3... to "value"
@@ -65,7 +65,7 @@ Get keys of a storage or an item in a storage.
 
 ### `isEmpty()`
 Check if a storage or an item in a storage is empty (if equal to "", 0, null, undefined, [] or {}).  
-If last argument is an array (can be preceded by other arguments to parse storage), isEmpty() test storage for each item of this array, and return true only if all test return true.
+If last argument is an array (can be preceded by other arguments to parse storage), isEmpty() tests storage for each item of this array, and returns true only if all tests return true.
 
     storage.set('foo','value')
     storage.set('foo2','foo3'..., {'foo4':'value4,'foo5':'value5'})
@@ -82,8 +82,8 @@ If last argument is an array (can be preceded by other arguments to parse storag
     storage.isEmpty('foo2','foo3'...,['foo6','foo7']) // Check if storage.foo2.foo3...foo6 and storage.foo2.foo3...foo7 are empty (true)
 
 ### `isSet()`
-Check if an item exists in a storage (if different of null and undefined).  
-If last argument is an array (can be preceded by other arguments to parse storage), isSet() test storage for each item of this array, and return true only if all test return true.
+Check if an item exists in a storage (if not null or undefined).  
+If last argument is an array (can be preceded by other arguments to parse storage), isSet() tests storage for each item of this array, and returns true only if all test return true.
 
     storage.set('foo','value')
     storage.set('foo2','foo3'..., {'foo4':'value4,'foo5':'value5'})
@@ -99,7 +99,7 @@ If last argument is an array (can be preceded by other arguments to parse storag
 
 ### `remove()`
 Delete an item from a storage.  
-If last argument is an array (can be preceded by other arguments to parse storage), remove() remove value of storage for each item of this array.
+If last argument is an array (can be preceded by other arguments to parse storage), remove() removes value of storage for each item of this array.
 
     storage.remove('foo') // Delete storage.foo
     storage.remove('foo.foo2.foo3'...) // Delete storage.foo.foo2.foo3...
@@ -113,68 +113,68 @@ Truncate the storage
     storage.removeAll(true) // Only on global storages. Delete all items from the storage and reinitialize previously initialized namespaces
 
 ### `setExpires()`
-Only on cookieStorage. Set expires date in days (default value is null, cookie is valid for session only; only cookies setted after setExpires() call will be affected).
+Only on cookieStorage. Sets expires date in days (default value is null, cookie is valid for session only; only cookies set after setExpires() call will be affected).
 
     storage.setExpires(10) // Set expiry date to today + 10 days
 
-This method return the storage object, so you can do :
+This method returns the storage object, so you can:
 
     storage.setExpires(10).set('foo','value') // Set expiry date to today + 10 days and set a new cookie
 
 ### `setPath()`
-Only on cookieStorage. Set path for cookies (default value is null; only cookies setted after setPath() call will be affected).
+Only on cookieStorage. Sets path for cookies (default value is null; only cookies set after setPath() call will be affected).
 
     storage.setPath('/') // Set path to '/'
 
-This method return the storage object, so you can do :
+This method return the storage object, so you can:
 
     storage.setPath('/').set('foo','value') // Set path to '/' and set a new cookie
 
 ### `setDomain()`
-Only on cookieStorage. Set domain for cookies (default value is null; only cookies setted after setDomain() call will be affected).
+Only on cookieStorage. Sets domain for cookies (default value is null; only cookies set after setDomain() call will be affected).
 
     storage.setDomain('www.ndd.com') // Set domain to www.ndd.com
 
-This method return the storage object, so you can do :
+This method return the storage object, so you can:
 
     storage.setDomain('www.ndd.com').set('foo','value') // Set domain to www.ndd.com and set a new cookie
 
 ### `setConf()`
-Only on cookieStorage. Set cookie configuration with an object (only cookies setted after setConf() call will be affected).
+Only on cookieStorage. Sets cookie configuration with an object (only cookies set after setConf() call will be affected).
 
     storage.setConf({path:'/',expires:10,'domain':'www.ndd.com'}) // Set expiry date, domain and path
 
-This method return the storage object, so you can do :
+This method return the storage object, so you can:
 
     storage.setConf({path:'/',expires:10}).set('foo','value') // Set configuration and set a new cookie
 
 ### `setDefaultConf()`
-Only on cookieStorage. Set default configuration (only cookies setted after setDefaultConf() call will be affected).
+Only on cookieStorage. Sets default configuration (only cookies set after setDefaultConf() call will be affected).
 
     storage.setDefaultConf() // Set path, domain and expiry date to null
 
-This method return the storage object, so you can do :
+This method return the storage object, so you can:
 
     storage.setDefaultConf().set('foo','value') // Set default configuration and set a new cookie
 
 ### `$.namespaceStorages`
-Object that contains all initilialized namespace storages
+Object that contains all initilialized namespace storages.
 
 ### `$.removeAllStorages()`
 Delete all items of all storages.
-As removeAll(), is first argument is given to true, namespaces are reinitialized.
-Else, $.namespaceStorages is set to an empty object and previously namespaces are lost.
+As removeAll(), if first argument given is set to true, namespaces are reinitialized.
+Else, $.namespaceStorages is set to an empty object and previous namespaces are lost.
 
 
 
 Compatibility
 -------------
 
-JQuery Storage API is compatible with all browsers that support storage and JSON natively.
+jQuery Storage API is compatible with all browsers that support storage and JSON natively.
 
-If you want more compatibility :
+If you want more compatibility:
 * Add jquery.cookie (https://github.com/carhartl/jquery-cookie) before this plugin and storage will work on every browsers that support JSON natively!
-* You want more? Add json2.js (https://github.com/douglascrockford/JSON-js) too and storage will be enable on every browsers!
+* You want more? Add json2.js (https://github.com/douglascrockford/JSON-js), too, and storage will be enable on every browser!
 
 
 
