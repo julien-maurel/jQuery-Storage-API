@@ -1,6 +1,6 @@
 {
-  "name": "storageapi",
-  "version": "1.7.4",
+  "name": "jquery-storage-api",
+  "version": "1.7.5",
   "title": "jQuery Storage API",
   "author": {
     "name": "Julien Maurel",
@@ -23,12 +23,13 @@
     "localStorage",
     "sessionStorage",
     "cookie",
-    "namespace"
+    "namespace",
+    "jquery-plugins",
+    "ecosystem:jquery"  
   ],
   "homepage": "https://github.com/julien-maurel/jQuery-Storage-API",
   "bugs": "https://github.com/julien-maurel/jQuery-Storage-API/issues",
-  "docs": "https://github.com/julien-maurel/jQuery-Storage-API",
-  "demo": "https://github.com/julien-maurel/jQuery-Storage-API",
+  "repository": "https://github.com/julien-maurel/jQuery-Storage-API",
   "files": [
     "jquery.storageapi.js"
   ]

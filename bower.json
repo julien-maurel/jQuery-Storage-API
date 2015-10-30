@@ -1,7 +1,7 @@
 {
-  "name": "jQuery-Storage-API",
+  "name": "jquery-storage-api",
   "title": "jQuery Storage API",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "main": "jquery.storageapi.js",
   "description": "jQuery Storage API is a plugin that simplify access to storages (HTML5) & cookies, add namespace storage functionality and provide compatiblity for old browsers with cookies!",
   "keywords": [

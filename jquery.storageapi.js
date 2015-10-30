@@ -9,7 +9,7 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.7.3
+ * Version: 1.7.5
  *
  */
 (function (factory) {
