@@ -244,7 +244,7 @@
     }
     if(o && o._cookie){
       // If storage is a cookie, use $.cookie to retrieve keys
-      for(var key in $.cookie()){
+      for(var key in Cookies.get()){
         if(key!='') {
           keys.push(key.replace(o._prefix,''));
         }
@@ -271,7 +271,7 @@
       localStorage:$.extend({},$.localStorage,{_ns:name}),
       sessionStorage:$.extend({},$.sessionStorage,{_ns:name})
     };
-    if($.cookie){
+    if(Cookies){
       if(!window.cookieStorage.getItem(name)) window.cookieStorage.setItem(name,'{}');
       ns.cookieStorage=$.extend({},$.cookieStorage,{_ns:name});
     }
@@ -291,10 +291,10 @@
       return false;
     }
   }
-  
+
   // Check if storages are natively available on browser
   var storage_available=_testStorage('localStorage');
-  
+
   // Namespace object
   var storage={
     _type:'',
@@ -359,7 +359,7 @@
   };
 
   // Use jquery.cookie for compatibility with old browsers and give access to cookieStorage
-  if($.cookie){
+  if(Cookies){
     // sessionStorage is valid for one window/tab. To simulate that with cookie, we set a name for the window and use it for the name of the cookie
     if(!window.name) window.name=Math.floor(Math.random()*100000000);
     var cookie_storage={
@@ -369,16 +369,16 @@
       _path:null,
       _domain:null,
       setItem:function(n,v){
-        $.cookie(this._prefix+n,v,{expires:this._expires,path:this._path,domain:this._domain});
+        Cookies.set(this._prefix+n,v,{expires:this._expires,path:this._path,domain:this._domain});
       },
       getItem:function(n){
-        return $.cookie(this._prefix+n);
+        return Cookies.get(this._prefix+n);
       },
       removeItem:function(n){
-        return $.removeCookie(this._prefix+n);
+        return Cookies.remove(this._prefix+n);
       },
       clear:function(){
-        for(var key in $.cookie()){
+        for(var key in Cookies()){
           if(key!=''){
             if(!this._prefix && key.indexOf(cookie_local_prefix)===-1 && key.indexOf(cookie_session_prefix)===-1 || this._prefix && key.indexOf(this._prefix)===0) {
               $.removeCookie(key);
