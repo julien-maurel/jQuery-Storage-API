@@ -87,14 +87,12 @@
       // If first argument is an object, set values of storage for each property of this object
       for(var i in a1){
         vi=a1[i];
-        if(!$.isPlainObject(vi)) s.setItem(i,vi);
-        else s.setItem(i,JSON.stringify(vi));
+        s.setItem(i,JSON.stringify(vi));
       }
       return a1;
     }else if(l==3){
       // If only 3 arguments, set value of storage directly
-      if(typeof a2==='object') s.setItem(a1,JSON.stringify(a2));
-      else s.setItem(a1,a2);
+      s.setItem(a1,JSON.stringify(a2));
       return a2;
     }else{
       // If more than 3 arguments, parse storage to retrieve final node and set value
