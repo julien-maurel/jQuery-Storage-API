@@ -241,6 +241,21 @@ describe("Jquery.StorageApi", function() {
         expect(storage.get("item.item1",["item1prop1","item1prop3"])).toEqual({"item1prop1":"value1", "item1prop3":"value3"});
       });
 
+      /* alwaysUseJson tests */
+      it("'alwaysUseJson' activated", function() {
+        $.alwaysUseJsonInStorage(true);
+
+        var ret = storage.set("item", 1);
+        expect(ret).toEqual(1);
+        expect(storage.get("item")).toEqual(1);
+
+        var ret = storage.set("item", "1");
+        expect(ret).toEqual("1");
+        expect(storage.get("item")).toEqual("1");
+
+        $.alwaysUseJsonInStorage(false);
+      });
+      
       /* Keys tests */
       it("'keys' returns the keys associated with a storage", function() {
         storage.set("item1", "value1");

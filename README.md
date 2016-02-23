@@ -113,7 +113,8 @@ Truncate the storage
     storage.removeAll(true) // Only on global storages. Delete all items from the storage and reinitialize previously initialized namespaces
 
 ### `setExpires()`
-Only on cookieStorage. Sets expires date in days (default value is null, cookie is valid for session only; only cookies set after setExpires() call will be affected).
+Only on cookieStorage.  
+Sets expires date in days (default value is null, cookie is valid for session only; only cookies set after setExpires() call will be affected).
 
     storage.setExpires(10) // Set expiry date to today + 10 days
 
@@ -122,7 +123,8 @@ This method returns the storage object, so you can:
     storage.setExpires(10).set('foo','value') // Set expiry date to today + 10 days and set a new cookie
 
 ### `setPath()`
-Only on cookieStorage. Sets path for cookies (default value is null; only cookies set after setPath() call will be affected).
+Only on cookieStorage.  
+Sets path for cookies (default value is null; only cookies set after setPath() call will be affected).
 
     storage.setPath('/') // Set path to '/'
 
@@ -131,7 +133,8 @@ This method return the storage object, so you can:
     storage.setPath('/').set('foo','value') // Set path to '/' and set a new cookie
 
 ### `setDomain()`
-Only on cookieStorage. Sets domain for cookies (default value is null; only cookies set after setDomain() call will be affected).
+Only on cookieStorage.  
+Sets domain for cookies (default value is null; only cookies set after setDomain() call will be affected).
 
     storage.setDomain('www.ndd.com') // Set domain to www.ndd.com
 
@@ -140,7 +143,8 @@ This method return the storage object, so you can:
     storage.setDomain('www.ndd.com').set('foo','value') // Set domain to www.ndd.com and set a new cookie
 
 ### `setConf()`
-Only on cookieStorage. Sets cookie configuration with an object (only cookies set after setConf() call will be affected).
+Only on cookieStorage.  
+Sets cookie configuration with an object (only cookies set after setConf() call will be affected).
 
     storage.setConf({path:'/',expires:10,'domain':'www.ndd.com'}) // Set expiry date, domain and path
 
@@ -149,7 +153,8 @@ This method return the storage object, so you can:
     storage.setConf({path:'/',expires:10}).set('foo','value') // Set configuration and set a new cookie
 
 ### `setDefaultConf()`
-Only on cookieStorage. Sets default configuration (only cookies set after setDefaultConf() call will be affected).
+Only on cookieStorage.  
+Sets default configuration (only cookies set after setDefaultConf() call will be affected).
 
     storage.setDefaultConf() // Set path, domain and expiry date to null
 
@@ -161,10 +166,39 @@ This method return the storage object, so you can:
 Object that contains all initilialized namespace storages.
 
 ### `$.removeAllStorages()`
-Delete all items of all storages.
-As removeAll(), if first argument given is set to true, namespaces are reinitialized.
+Delete all items of all storages.  
+As removeAll(), if first argument given is set to true, namespaces are reinitialized.  
 Else, $.namespaceStorages is set to an empty object and previous namespaces are lost.
 
+### `$.alwaysUseJsonInStorage()`
+By default, basic values (string, int...) are always stored as string in html5 storages.
+
+    window.localStorage.setItem('foo', 1);
+    window.localStorage.getItem('foo'); // Return "1"
+
+So by default, if you do equivalent with the plugin, there will be the same behavior.
+
+    $.localStorage.set('foo', 1);
+    $.localStorage.get('foo'); // Return "1"
+    
+This is the case only if you store basic values in the root of the storage.  
+In others cases, plugin use JSON to store values.
+
+    $.localStorage.set('foo.foo2', 1);
+    $.localStorage.get('foo.foo2'); // Return 1
+    window.localStorage.getItem('foo'); // Return "{"foo2":1}"
+
+If you want to be able to store typed values even on the root of the storages, call `$.alwaysUseJsonInStorage(true)`
+
+    $.alwaysUseJsonInStorage(true);
+    
+    $.localStorage.set('foo', 1);
+    $.localStorage.get('foo'); // Return 1
+    window.localStorage.getItem('foo'); // Return "1"
+
+    $.localStorage.set('foo', '1');
+    $.localStorage.get('foo'); // Return "1"
+    window.localStorage.getItem('foo'); // Return ""1"", because value is JSON encoded
 
 
 Compatibility
