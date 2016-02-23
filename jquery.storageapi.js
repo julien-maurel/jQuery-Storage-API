@@ -9,7 +9,7 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.7.5
+ * Version: 1.8.1
  *
  */
 (function (factory) {
@@ -63,9 +63,9 @@
             // Parse next levels
             for (var i = 1; i < l - 1; i++) {
                 ret = ret[a[i]];
-              if (ret === undefined) {
-                throw new ReferenceError([].slice.call(a, 1, i + 1).join('.') + ' is not defined in this storage');
-              }
+                if (ret === undefined) {
+                    throw new ReferenceError([].slice.call(a, 1, i + 1).join('.') + ' is not defined in this storage');
+                }
             }
             // If last argument is an array, return an object with value for each item in this array
             // Else return value normally
@@ -91,11 +91,11 @@
             // If first argument is an object, set values of storage for each property of this object
             for (var i in a0) {
                 vi = a0[i];
-              if (!$.isPlainObject(vi) && !this.alwaysUseJson) {
-                s.setItem(i, vi);
-              } else {
-                s.setItem(i, JSON.stringify(vi));
-              }
+                if (!$.isPlainObject(vi) && !this.alwaysUseJson) {
+                    s.setItem(i, vi);
+                } else {
+                    s.setItem(i, JSON.stringify(vi));
+                }
             }
             return a0;
         } else if (l == 2) {
@@ -120,9 +120,9 @@
             // Parse next levels and set value
             for (var i = 1; i < l - 2; i++) {
                 vi = a[i];
-              if (!tmp[vi] || !$.isPlainObject(tmp[vi])) {
-                tmp[vi] = {};
-              }
+                if (!tmp[vi] || !$.isPlainObject(tmp[vi])) {
+                    tmp[vi] = {};
+                }
                 tmp = tmp[vi];
             }
             tmp[a[i]] = a[i + 1];
@@ -157,9 +157,9 @@
             // Parse next levels and remove value
             for (var i = 1; i < l - 1; i++) {
                 tmp = tmp[a[i]];
-              if (tmp === undefined) {
-                throw new ReferenceError([].slice.call(a, 1, i).join('.') + ' is not defined in this storage');
-              }
+                if (tmp === undefined) {
+                    throw new ReferenceError([].slice.call(a, 1, i).join('.') + ' is not defined in this storage');
+                }
             }
             // If last argument is an array,remove value for each item in this array
             // Else remove value normally
@@ -208,17 +208,17 @@
             try {
                 var v = _get.apply(this, arguments);
                 // Convert result to an object (if last argument is an array, _get return already an object) and test each item
-              if (!$.isArray(a[l - 1])) {
-                v = {'totest': v};
-              }
+                if (!$.isArray(a[l - 1])) {
+                    v = {'totest': v};
+                }
                 for (var i in v) {
-                  if (!(
-                          ($.isPlainObject(v[i]) && $.isEmptyObject(v[i])) ||
-                          ($.isArray(v[i]) && !v[i].length) ||
-                          (!v[i])
-                      )) {
-                    return false;
-                  }
+                    if (!(
+                            ($.isPlainObject(v[i]) && $.isEmptyObject(v[i])) ||
+                            ($.isArray(v[i]) && !v[i].length) ||
+                            (!v[i])
+                        )) {
+                        return false;
+                    }
                 }
                 return true;
             } catch (e) {
@@ -246,13 +246,13 @@
             try {
                 var v = _get.apply(this, arguments);
                 // Convert result to an object (if last argument is an array, _get return already an object) and test each item
-              if (!$.isArray(a[l - 1])) {
-                v = {'totest': v};
-              }
+                if (!$.isArray(a[l - 1])) {
+                    v = {'totest': v};
+                }
                 for (var i in v) {
-                  if (!(v[i] !== undefined && v[i] !== null)) {
-                    return false;
-                  }
+                    if (!(v[i] !== undefined && v[i] !== null)) {
+                        return false;
+                    }
                 }
                 return true;
             } catch (e) {
@@ -280,7 +280,9 @@
             }
         } else {
             for (var i in o) {
-                keys.push(i);
+                if (o.hasOwnProperty(i)) {
+                    keys.push(i);
+                }
             }
         }
         return keys;
@@ -288,32 +290,32 @@
 
     // Create new namespace storage
     function _createNamespace(name) {
-      if (!name || typeof name != "string") {
-        throw new Error('First parameter must be a string');
-      }
+        if (!name || typeof name != "string") {
+            throw new Error('First parameter must be a string');
+        }
         if (storage_available) {
-          if (!window.localStorage.getItem(name)) {
-            window.localStorage.setItem(name, '{}');
-          }
-          if (!window.sessionStorage.getItem(name)) {
-            window.sessionStorage.setItem(name, '{}');
-          }
+            if (!window.localStorage.getItem(name)) {
+                window.localStorage.setItem(name, '{}');
+            }
+            if (!window.sessionStorage.getItem(name)) {
+                window.sessionStorage.setItem(name, '{}');
+            }
         } else {
-          if (!window.localCookieStorage.getItem(name)) {
-            window.localCookieStorage.setItem(name, '{}');
-          }
-          if (!window.sessionCookieStorage.getItem(name)) {
-            window.sessionCookieStorage.setItem(name, '{}');
-          }
+            if (!window.localCookieStorage.getItem(name)) {
+                window.localCookieStorage.setItem(name, '{}');
+            }
+            if (!window.sessionCookieStorage.getItem(name)) {
+                window.sessionCookieStorage.setItem(name, '{}');
+            }
         }
         var ns = {
             localStorage: $.extend({}, $.localStorage, {_ns: name}),
             sessionStorage: $.extend({}, $.sessionStorage, {_ns: name})
         };
         if ($.cookie) {
-          if (!window.cookieStorage.getItem(name)) {
-            window.cookieStorage.setItem(name, '{}');
-          }
+            if (!window.cookieStorage.getItem(name)) {
+                window.cookieStorage.setItem(name, '{}');
+            }
             ns.cookieStorage = $.extend({}, $.cookieStorage, {_ns: name});
         }
         $.namespaceStorages[name] = ns;
@@ -324,9 +326,9 @@
     function _testStorage(name) {
         var foo = 'jsapi';
         try {
-          if (!window[name]) {
-            return false;
-          }
+            if (!window[name]) {
+                return false;
+            }
             window[name].setItem(foo, foo);
             window[name].removeItem(foo);
             return true;
@@ -345,9 +347,9 @@
         _callMethod: function (f, a) {
             var p = [], a = Array.prototype.slice.call(a), a0 = a[0];
 
-          if (this._ns) {
-            p.push(this._ns);
-          }
+            if (this._ns) {
+                p.push(this._ns);
+            }
             if (typeof a0 === 'string' && a0.indexOf('.') !== -1) {
                 a.shift();
                 [].unshift.apply(a, a0.split('.'));
@@ -364,9 +366,9 @@
         // Set items
         set: function () {
             var l = arguments.length, a = arguments, a0 = a[0];
-          if (l < 1 || !$.isPlainObject(a0) && l < 2) {
-            throw new Error('Minimum 2 arguments must be given or first parameter must be an object');
-          }
+            if (l < 1 || !$.isPlainObject(a0) && l < 2) {
+                throw new Error('Minimum 2 arguments must be given or first parameter must be an object');
+            }
             // If first argument is an object and storage is a namespace storage, set values individually
             if ($.isPlainObject(a0) && this._ns) {
                 for (var i in a0) {
@@ -375,18 +377,18 @@
                 return a0;
             } else {
                 var r = this._callMethod(_set, a);
-              if (this._ns) {
-                return r[a0.split('.')[0]];
-              } else {
-                return r;
-              }
+                if (this._ns) {
+                    return r[a0.split('.')[0]];
+                } else {
+                    return r;
+                }
             }
         },
         // Delete items
         remove: function () {
-          if (arguments.length < 1) {
-            throw new Error('Minimum 1 argument must be given');
-          }
+            if (arguments.length < 1) {
+                throw new Error('Minimum 1 argument must be given');
+            }
             return this._callMethod(_remove, arguments);
         },
         // Delete all items
@@ -404,9 +406,9 @@
         },
         // Items exists
         isSet: function () {
-          if (arguments.length < 1) {
-            throw new Error('Minimum 1 argument must be given');
-          }
+            if (arguments.length < 1) {
+                throw new Error('Minimum 1 argument must be given');
+            }
             return this._callMethod(_isSet, arguments);
         },
         // Get keys of items
@@ -418,9 +420,9 @@
     // Use jquery.cookie for compatibility with old browsers and give access to cookieStorage
     if ($.cookie) {
         // sessionStorage is valid for one window/tab. To simulate that with cookie, we set a name for the window and use it for the name of the cookie
-      if (!window.name) {
-        window.name = Math.floor(Math.random() * 100000000);
-      }
+        if (!window.name) {
+            window.name = Math.floor(Math.random() * 100000000);
+        }
         var cookie_storage = {
             _cookie: true,
             _prefix: '',
@@ -458,15 +460,15 @@
                 return this;
             },
             setConf: function (c) {
-              if (c.path) {
-                this._path = c.path;
-              }
-              if (c.domain) {
-                this._domain = c.domain;
-              }
-              if (c.expires) {
-                this._expires = c.expires;
-              }
+                if (c.path) {
+                    this._path = c.path;
+                }
+                if (c.domain) {
+                    this._domain = c.domain;
+                }
+                if (c.expires) {
+                    this._expires = c.expires;
+                }
                 return this;
             },
             setDefaultConf: function () {
@@ -534,9 +536,9 @@
     $.removeAllStorages = function (reinit_ns) {
         $.localStorage.removeAll(reinit_ns);
         $.sessionStorage.removeAll(reinit_ns);
-      if ($.cookieStorage) {
-        $.cookieStorage.removeAll(reinit_ns);
-      }
+        if ($.cookieStorage) {
+            $.cookieStorage.removeAll(reinit_ns);
+        }
         if (!reinit_ns) {
             $.namespaceStorages = {};
         }

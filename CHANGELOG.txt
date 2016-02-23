@@ -1,3 +1,6 @@
+1.8.1
+  Fix issue on FF with keys method
+
 1.8.0
   Add $.alwaysUseJsonInStorage method to always use Json to store values, even to store strings, int... at the first level
 
