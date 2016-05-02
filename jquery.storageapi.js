@@ -9,8 +9,7 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.8.1
- *
+ * Version: 1.9.0
  */
 (function (factory) {
     if (typeof define === 'function' && define.amd) {
@@ -272,8 +271,8 @@
             o = s;
         }
         if (o && o._cookie) {
-            // If storage is a cookie, use $.cookie to retrieve keys
-            for (var key in $.cookie()) {
+            // If storage is a cookie, use js-cookie to retrieve keys
+            for (var key in Cookies.get()) {
                 if (key != '') {
                     keys.push(key.replace(o._prefix, ''));
                 }
@@ -312,7 +311,7 @@
             localStorage: $.extend({}, $.localStorage, {_ns: name}),
             sessionStorage: $.extend({}, $.sessionStorage, {_ns: name})
         };
-        if ($.cookie) {
+        if (Cookies) {
             if (!window.cookieStorage.getItem(name)) {
                 window.cookieStorage.setItem(name, '{}');
             }
@@ -417,8 +416,8 @@
         }
     };
 
-    // Use jquery.cookie for compatibility with old browsers and give access to cookieStorage
-    if ($.cookie) {
+    // Use js-cookie for compatibility with old browsers and give access to cookieStorage
+    if (Cookies) {
         // sessionStorage is valid for one window/tab. To simulate that with cookie, we set a name for the window and use it for the name of the cookie
         if (!window.name) {
             window.name = Math.floor(Math.random() * 100000000);
@@ -430,16 +429,16 @@
             _path: null,
             _domain: null,
             setItem: function (n, v) {
-                $.cookie(this._prefix + n, v, {expires: this._expires, path: this._path, domain: this._domain});
+                Cookies.set(this._prefix + n, v, {expires: this._expires, path: this._path, domain: this._domain});
             },
             getItem: function (n) {
-                return $.cookie(this._prefix + n);
+                return Cookies.get(this._prefix + n);
             },
             removeItem: function (n) {
-                return $.removeCookie(this._prefix + n);
+                return Cookies.remove(this._prefix + n, {path: this._path});
             },
             clear: function () {
-                for (var key in $.cookie()) {
+                for (var key in Cookies.get()) {
                     if (key != '') {
                         if (!this._prefix && key.indexOf(cookie_local_prefix) === -1 && key.indexOf(cookie_session_prefix) === -1 || this._prefix && key.indexOf(this._prefix) === 0) {
                             $.removeCookie(key);
@@ -484,7 +483,6 @@
         }
         window.cookieStorage = $.extend({}, cookie_storage);
         // cookieStorage API
-        $.cookie.raw = false;
         $.cookieStorage = $.extend({}, storage, {
             _type: 'cookieStorage',
             setExpires: function (e) {

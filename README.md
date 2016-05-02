@@ -7,8 +7,7 @@ Functionalities:
 * To store object easily, encode/decode it with JSON automatically
 * Ability to define namespace and use it as a specific storage
 * Magic getter and setter to have access at an infinite object level with one call
-* Add jquery.cookie and manage your cookies with this API
-* You want use storage on old browsers? Add jquery.cookie & JSON and jQuery Storage API uses cookies to simulate storage!
+* Add js-cookie (https://github.com/js-cookie/js-cookie) and manage your cookies with this API
 
 
 Storages
@@ -19,14 +18,14 @@ Storages
 #### Session storage
     $.sessionStorage
 
-#### Cookie storage (only if jquery.cookie added)
+#### Cookie storage (only if js-cookie added)
     $.cookieStorage
 
 #### Namespace storage
     ns=$.initNamespaceStorage('ns_name');
     ns.localStorage // Namespace in localStorage
     ns.sessionStorage // Namespace in sessionStorage
-    ns.cookieStorage // Namespace in cookieStorage (only if jquery.cookie added)
+    ns.cookieStorage // Namespace in cookieStorage (only if js-cookie added)
 
 Public methods on storage
 -------------------------
@@ -204,12 +203,9 @@ If you want to be able to store typed values even on the root of the storages, c
 Compatibility
 -------------
 
-jQuery Storage API is compatible with all browsers that support storage and JSON natively.
+jQuery Storage API is compatible with all browsers that support storage and JSON natively (so all recents browsers) except IE8.
 
-If you want more compatibility:
-* Add jquery.cookie (https://github.com/carhartl/jquery-cookie) before this plugin and storage will work on every browsers that support JSON natively!
-* You want more? Add json2.js (https://github.com/douglascrockford/JSON-js), too, and storage will be enable on every browser!
-
+If you need support of IE<9, please use older version of this plugin (latest compatible version is 1.7.5).
 
 
 Migration

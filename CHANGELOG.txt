@@ -1,9 +1,14 @@
+1.9.0
+  Replace jquery.cookie (no longer maintained) by js-cookie
+  Add gulp task to generate minified version
+
 1.8.1
   Fix issue on FF with keys method
 
 1.8.0
   Add $.alwaysUseJsonInStorage method to always use Json to store values, even to store strings, int... at the first level
-
+  Broke compatibility with IE<9
+  
 1.7.5
   Add plugin to npm
 

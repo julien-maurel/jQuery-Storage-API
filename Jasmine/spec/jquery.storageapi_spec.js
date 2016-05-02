@@ -18,10 +18,10 @@ function testStorage(name){
 function clearAll(){
   wl.clear();
   ws.clear();
-  if($.cookie){
-    for(var key in $.cookie()){
+  if (Cookies) {
+    for (var key in Cookies.get()) {
       if(key!='') {
-        $.removeCookie(key);
+        Cookies.remove(key, {path: window.cookieStorage._path});
       }
     }
   }
@@ -50,7 +50,7 @@ describe("Jquery.StorageApi", function() {
       expect($.namespaceStorages['test_ns']).toEqual(ns);
       expect(wl.getItem('test_ns')).toEqual("{}");
       expect(ws.getItem('test_ns')).toEqual("{}");
-      if($.cookie) {
+      if (Cookies) {
         expect(window.cookieStorage.getItem('test_ns')).toEqual("{}");
       }
     });
@@ -59,14 +59,14 @@ describe("Jquery.StorageApi", function() {
 
   /* Tests on all storage */
   var storage_types=['localStorage','sessionStorage'];
-  if($.cookie) {
+  if (Cookies) {
     storage_types.push('cookieStorage');
   }else{
-    console.log("Skipping $.cookieStorage specs. Could not load JQuery $.cookie.");
+    console.log("Skipping $.cookieStorage specs. Could not load JQuery js-cookie.");
   }
   storage_types.push('ns.localStorage');
   storage_types.push('ns.sessionStorage');
-  if($.cookie) {
+  if (Cookies) {
     storage_types.push('ns.cookieStorage');
   }
 
@@ -406,7 +406,7 @@ describe("Jquery.StorageApi", function() {
       expect($.sessionStorage.get("item")).toEqual(null);
       expect($.localStorage.get("test_ns")).toEqual(null);
       expect($.sessionStorage.get("test_ns")).toEqual(null);
-      if($.cookie){
+      if (Cookies) {
         expect($.cookieStorage.get("item")).toEqual(null);
         expect($.cookieStorage.get("test_ns")).toEqual(null);
       }
@@ -422,7 +422,7 @@ describe("Jquery.StorageApi", function() {
       expect($.sessionStorage.get("item")).toEqual(null);
       expect($.localStorage.get("test_ns")).toEqual({});
       expect($.sessionStorage.get("test_ns")).toEqual({});
-      if($.cookie){
+      if (Cookies) {
         expect($.cookieStorage.get("item")).toEqual(null);
         expect($.cookieStorage.get("test_ns")).toEqual({});
       }
