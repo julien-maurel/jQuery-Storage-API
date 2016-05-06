@@ -18,7 +18,7 @@ function testStorage(name){
 function clearAll(){
   wl.clear();
   ws.clear();
-  if (Cookies) {
+  if (typeof Cookies === 'object') {
     for (var key in Cookies.get()) {
       if(key!='') {
         Cookies.remove(key, {path: window.cookieStorage._path});
@@ -50,7 +50,7 @@ describe("Jquery.StorageApi", function() {
       expect($.namespaceStorages['test_ns']).toEqual(ns);
       expect(wl.getItem('test_ns')).toEqual("{}");
       expect(ws.getItem('test_ns')).toEqual("{}");
-      if (Cookies) {
+      if (typeof Cookies === 'object') {
         expect(window.cookieStorage.getItem('test_ns')).toEqual("{}");
       }
     });
@@ -59,14 +59,14 @@ describe("Jquery.StorageApi", function() {
 
   /* Tests on all storage */
   var storage_types=['localStorage','sessionStorage'];
-  if (Cookies) {
+  if (typeof Cookies === 'object') {
     storage_types.push('cookieStorage');
   }else{
     console.log("Skipping $.cookieStorage specs. Could not load JQuery js-cookie.");
   }
   storage_types.push('ns.localStorage');
   storage_types.push('ns.sessionStorage');
-  if (Cookies) {
+  if (typeof Cookies === 'object') {
     storage_types.push('ns.cookieStorage');
   }
 
@@ -406,7 +406,7 @@ describe("Jquery.StorageApi", function() {
       expect($.sessionStorage.get("item")).toEqual(null);
       expect($.localStorage.get("test_ns")).toEqual(null);
       expect($.sessionStorage.get("test_ns")).toEqual(null);
-      if (Cookies) {
+      if (typeof Cookies === 'object') {
         expect($.cookieStorage.get("item")).toEqual(null);
         expect($.cookieStorage.get("test_ns")).toEqual(null);
       }
@@ -422,7 +422,7 @@ describe("Jquery.StorageApi", function() {
       expect($.sessionStorage.get("item")).toEqual(null);
       expect($.localStorage.get("test_ns")).toEqual({});
       expect($.sessionStorage.get("test_ns")).toEqual({});
-      if (Cookies) {
+      if (typeof Cookies === 'object') {
         expect($.cookieStorage.get("item")).toEqual(null);
         expect($.cookieStorage.get("test_ns")).toEqual({});
       }

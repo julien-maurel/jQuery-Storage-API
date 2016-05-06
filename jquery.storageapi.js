@@ -9,7 +9,7 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.9.0
+ * Version: 1.9.1
  */
 (function (factory) {
     if (typeof define === 'function' && define.amd) {
@@ -311,7 +311,7 @@
             localStorage: $.extend({}, $.localStorage, {_ns: name}),
             sessionStorage: $.extend({}, $.sessionStorage, {_ns: name})
         };
-        if (Cookies) {
+        if (typeof Cookies === 'object') {
             if (!window.cookieStorage.getItem(name)) {
                 window.cookieStorage.setItem(name, '{}');
             }
@@ -417,7 +417,7 @@
     };
 
     // Use js-cookie for compatibility with old browsers and give access to cookieStorage
-    if (Cookies) {
+    if (typeof Cookies === 'object') {
         // sessionStorage is valid for one window/tab. To simulate that with cookie, we set a name for the window and use it for the name of the cookie
         if (!window.name) {
             window.name = Math.floor(Math.random() * 100000000);
