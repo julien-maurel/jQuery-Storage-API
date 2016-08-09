@@ -208,6 +208,25 @@ describe("Jquery.StorageApi", function() {
         expect(JSON.parse(wstorage.getItem("item")).prop1.item2).toEqual("value2");
       });
 
+      it("'set' stores array as first level and update just one index og the array (by js syntax)", function() {
+        var ret=storage.set("item.2",[1,2,3]);
+        expect(ret).toEqual([undefined,undefined,[1,2,3]]); // ret contains value before insertion in storage, so array contains undefined values
+        expect(JSON.parse(wstorage.getItem("item"))).toEqual([null,null,[1,2,3]]); // storage use json, so undefined values are converted to null values
+        var ret=storage.set("item.2.0",4);
+        expect(ret).toEqual([null,null,[4,2,3]]); 
+        expect(JSON.parse(wstorage.getItem("item"))[2]).toEqual([4,2,3]);
+      });
+
+      it("'set' stores array as second level and update just one index og the array (by js syntax)", function() {
+        var ret=storage.set("item.prop1.2",[1,2,3]);
+        expect(ret).toEqual({prop1:[undefined,undefined,[1,2,3]]}); // ret contains value before insertion in storage, so array contains undefined values
+        expect(JSON.parse(wstorage.getItem("item"))).toEqual({prop1:[null,null,[1,2,3]]}); // storage use json, so undefined values are converted to null values
+        var ret=storage.set("item.prop1.2.0",4);
+        expect(ret).toEqual({prop1:[null,null,[4,2,3]]}); 
+        expect(JSON.parse(wstorage.getItem("item")).prop1[2]).toEqual([4,2,3]);
+      });
+
+
       /* Get tests */
       it("'get' retrieves one item (by name)", function() {
         storage.set("item", "value");

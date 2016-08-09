@@ -9,7 +9,7 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.9.1
+ * Version: 1.9.2
  */
 (function (factory) {
     if (typeof define === 'function' && define.amd) {
@@ -83,7 +83,7 @@
 
     // Set items of a storage
     function _set() {
-        var storage = this._type, l = arguments.length, s = window[storage], a = arguments, a0 = a[0], a1 = a[1], vi, to_store = {}, tmp;
+        var storage = this._type, l = arguments.length, s = window[storage], a = arguments, a0 = a[0], a1 = a[1], vi, to_store = isNaN(a1)?{}:[], type, tmp;
         if (l < 1 || !$.isPlainObject(a0) && l < 2) {
             throw new Error('Minimum 2 arguments must be given or first parameter must be an object');
         } else if ($.isPlainObject(a0)) {
@@ -119,8 +119,10 @@
             // Parse next levels and set value
             for (var i = 1; i < l - 2; i++) {
                 vi = a[i];
-                if (!tmp[vi] || !$.isPlainObject(tmp[vi])) {
-                    tmp[vi] = {};
+                type = isNaN(a[i+1])?"object":"array";
+                if (!tmp[vi] || type == "object" && !$.isPlainObject(tmp[vi]) || type=="array" && !$.isArray(tmp[vi])) {
+                    if(type=="array") tmp[vi] = [];
+                    else tmp[vi] = {};
                 }
                 tmp = tmp[vi];
             }
