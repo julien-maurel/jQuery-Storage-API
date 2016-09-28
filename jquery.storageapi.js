@@ -313,7 +313,7 @@
             localStorage: $.extend({}, $.localStorage, {_ns: name}),
             sessionStorage: $.extend({}, $.sessionStorage, {_ns: name})
         };
-        if (typeof Cookies === 'object') {
+        if (typeof Cookies !== 'undefined') {
             if (!window.cookieStorage.getItem(name)) {
                 window.cookieStorage.setItem(name, '{}');
             }
@@ -419,7 +419,7 @@
     };
 
     // Use js-cookie for compatibility with old browsers and give access to cookieStorage
-    if (typeof Cookies === 'object') {
+    if (typeof Cookies !== 'undefined') {
         // sessionStorage is valid for one window/tab. To simulate that with cookie, we set a name for the window and use it for the name of the cookie
         if (!window.name) {
             window.name = Math.floor(Math.random() * 100000000);
@@ -443,7 +443,7 @@
                 for (var key in Cookies.get()) {
                     if (key != '') {
                         if (!this._prefix && key.indexOf(cookie_local_prefix) === -1 && key.indexOf(cookie_session_prefix) === -1 || this._prefix && key.indexOf(this._prefix) === 0) {
-                            $.removeCookie(key);
+                            Cookies.remove(key);
                         }
                     }
                 }
