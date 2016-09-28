@@ -1,3 +1,6 @@
+1.9.4
+  Fix issue with cookies
+  
 1.9.3
   Add main property on package.json
 

@@ -1,3 +1,15 @@
+IMPORTANT
+=========
+
+This plugin is no longer maintained.
+
+A new one, without dependencies with jQuery, is available : https://github.com/julien-maurel/js-storage
+
+APIs are same, but are accessibles with global variable "Storages" instead "$".
+
+Thanks!
+
+
 jQuery Storage API
 ==================
 
