@@ -1,6 +1,6 @@
 {
   "name": "jquery-storage-api",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "title": "jQuery Storage API",
   "author": {
     "name": "Julien Maurel",
@@ -35,6 +35,7 @@
   "homepage": "https://github.com/julien-maurel/jQuery-Storage-API",
   "bugs": "https://github.com/julien-maurel/jQuery-Storage-API/issues",
   "repository": "https://github.com/julien-maurel/jQuery-Storage-API",
+  "main": "./jquery.storageapi.js",
   "files": [
     "jquery.storageapi.js"
   ]

@@ -9,7 +9,7 @@
  * Project home:
  * https://github.com/julien-maurel/jQuery-Storage-API
  *
- * Version: 1.9.2
+ * Version: 1.9.3
  */
 (function (factory) {
     if (typeof define === 'function' && define.amd) {
