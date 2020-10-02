@@ -1,3 +1,4 @@
+//this is jquery code for storage api
 function getWindowStorage(name){
   if(testStorage(name)) return window[name];
   return window[name.replace('Storage','CookieStorage')];
